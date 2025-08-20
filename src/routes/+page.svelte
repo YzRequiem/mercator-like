@@ -11,8 +11,8 @@
 	} from 'lucide-svelte';
 
 	let selectedLayer = $state('metier');
-	let expandedItems = $state({});
-	let selectedBlock = $state(null);
+	let expandedItems = $state<Record<string, boolean>>({});
+	let selectedBlock = $state<string | null>(null);
 
 	const layers = [
 		{
@@ -275,6 +275,36 @@
 		}
 	}
 
+	function getLayerGradient(color: string) {
+		switch (color) {
+			case 'bg-blue-500':
+				return '#3b82f6, #1d4ed8, #1e40af';
+			case 'bg-green-500':
+				return '#10b981, #059669, #047857';
+			case 'bg-yellow-500':
+				return '#f59e0b, #d97706, #b45309';
+			case 'bg-red-500':
+				return '#ef4444, #dc2626, #b91c1c';
+			default:
+				return '#6b7280, #4b5563, #374151';
+		}
+	}
+
+	function getLayerBorderGradient(color: string) {
+		switch (color) {
+			case 'bg-blue-500':
+				return 'from-blue-400 to-blue-600';
+			case 'bg-green-500':
+				return 'from-green-400 to-green-600';
+			case 'bg-yellow-500':
+				return 'from-yellow-400 to-yellow-600';
+			case 'bg-red-500':
+				return 'from-red-400 to-red-600';
+			default:
+				return 'from-gray-400 to-gray-600';
+		}
+	}
+
 	function selectLayer(layerId: string) {
 		selectedLayer = layerId;
 	}
@@ -289,48 +319,101 @@
 	<meta name="description" content="Cartographie du Système d'Information" />
 </svelte:head>
 
-<div class="mx-auto min-h-screen w-full max-w-7xl bg-gray-100">
+<div class="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50">
 	<!-- Header Mercator -->
-	<div class="border-b bg-white shadow-sm">
-		<div class="px-6 py-4">
+	<div class="relative border-b border-gray-200/30 bg-white/80 shadow-2xl backdrop-blur-xl">
+		<div
+			class="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-indigo-600/5 to-purple-600/5"
+		></div>
+		<div class="relative px-4 py-8 sm:px-6 lg:px-8">
 			<div class="flex items-center justify-between">
-				<div>
-					<h1 class="text-2xl font-bold text-gray-900">Mercator SI - MEDILOG</h1>
-					<p class="text-gray-600">Cartographie du Système d'Information</p>
+				<div class="space-y-2">
+					<h1
+						class="bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-4xl font-black tracking-tight text-transparent"
+					>
+						Mercator SI - MEDILOG
+					</h1>
+					<p class="font-medium text-gray-600">Cartographie du Système d'Information</p>
 				</div>
-				<div class="flex items-center gap-3">
-					<div class="text-right text-sm">
-						<div class="font-medium">220 collaborateurs</div>
-						<div class="text-gray-600">3 sites - 4000-6000 colis/jour</div>
+				<div class="flex items-center gap-6">
+					<div class="text-right">
+						<div class="flex items-center gap-2 text-sm font-bold text-gray-900">
+							<Users size={16} class="text-blue-600" />
+							220 collaborateurs
+						</div>
+						<div class="mt-1 flex items-center gap-2 text-sm text-gray-600">
+							<Database size={14} class="text-indigo-500" />
+							3 sites - 4000-6000 colis/jour
+						</div>
 					</div>
-					<div class="flex h-12 w-12 items-center justify-center rounded bg-blue-600">
-						<Building class="text-white" size={24} />
+					<div class="relative">
+						<div
+							class="absolute inset-0 rounded-2xl bg-gradient-to-br from-blue-400 to-indigo-600 opacity-75 blur-md"
+						></div>
+						<div
+							class="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 shadow-xl"
+						>
+							<Building class="text-white drop-shadow-sm" size={32} />
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 
 		<!-- Navigation des couches -->
-		<div class="border-t bg-gray-50">
-			<div class="px-6">
-				<div class="flex">
+		<div
+			class="relative bg-gradient-to-r from-slate-50/80 via-white/50 to-slate-50/80 backdrop-blur-sm"
+		>
+			<div class="px-4 sm:px-6 lg:px-8">
+				<div class="flex flex-wrap gap-1 lg:flex-nowrap">
 					{#each layers as layer}
 						<button
 							onclick={() => selectLayer(layer.id)}
-							class="flex items-center gap-3 border-b-3 px-6 py-4 font-semibold transition-all {selectedLayer ===
+							class="group relative flex flex-1 items-center gap-3 overflow-hidden rounded-t-2xl px-6 py-6 font-semibold transition-all duration-300 ease-out hover:scale-[1.02] lg:flex-none {selectedLayer ===
 							layer.id
-								? `border-current text-white ${layer.color}`
-								: 'border-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900'}"
+								? `-translate-y-1 transform text-white shadow-2xl`
+								: 'text-gray-700 hover:bg-white/70 hover:text-gray-900 hover:shadow-lg'}"
+							style={selectedLayer === layer.id
+								? `background: linear-gradient(135deg, ${getLayerGradient(layer.color)})`
+								: ''}
 						>
-							<div
-								class="h-4 w-4 rounded {selectedLayer === layer.id ? 'bg-white' : layer.color}"
-							></div>
-							<div>
-								<div class="font-bold">{layer.name}</div>
+							<!-- Animated background for non-selected tabs -->
+							{#if selectedLayer !== layer.id}
 								<div
-									class="text-xs {selectedLayer === layer.id ? 'text-gray-100' : 'text-gray-500'}"
-								>
-									{layer.description}
+									class="absolute inset-0 bg-gradient-to-br from-white/0 via-white/30 to-white/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+								></div>
+							{/if}
+
+							<!-- Border animation -->
+							<div
+								class="absolute bottom-0 left-0 h-1 w-0 bg-gradient-to-r {getLayerBorderGradient(
+									layer.color
+								)} transition-all duration-500 group-hover:w-full {selectedLayer === layer.id
+									? 'w-full'
+									: ''}"
+							></div>
+
+							<div class="relative flex items-center gap-3">
+								<div class="relative">
+									<div
+										class="h-5 w-5 rounded-full shadow-lg transition-all duration-300 {selectedLayer ===
+										layer.id
+											? 'scale-110 bg-white/90 shadow-xl'
+											: `${layer.color} group-hover:scale-110`}"
+									></div>
+									{#if selectedLayer === layer.id}
+										<div class="absolute inset-0 animate-ping rounded-full bg-white/30"></div>
+									{/if}
+								</div>
+								<div class="text-left">
+									<div class="text-sm leading-tight font-bold">{layer.name}</div>
+									<div
+										class="text-xs leading-tight {selectedLayer === layer.id
+											? 'text-white/90'
+											: 'text-gray-500 group-hover:text-gray-600'}"
+									>
+										{layer.description}
+									</div>
 								</div>
 							</div>
 						</button>
@@ -341,44 +424,85 @@
 	</div>
 
 	<!-- Contenu de la couche -->
-	<div class="p-6">
+	<div class="px-4 py-10 sm:px-6 lg:px-8">
 		{#if selectedLayer === 'metier'}
 			<!-- Couche Métier -->
-			<div class="space-y-6">
-				<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
-					<div class="rounded-lg border bg-white">
-						<div class="border-b bg-blue-50 px-4 py-3">
-							<h3 class="font-semibold text-blue-900">Processus Métier</h3>
+			<div class="space-y-10">
+				<div class="grid grid-cols-1 gap-10 lg:grid-cols-2">
+					<div
+						class="group hover:shadow-3xl relative overflow-hidden rounded-3xl border border-blue-200/50 bg-white/80 shadow-2xl backdrop-blur-sm transition-all duration-500 hover:scale-[1.02]"
+					>
+						<div
+							class="absolute inset-0 bg-gradient-to-br from-blue-50/80 via-transparent to-indigo-50/30"
+						></div>
+						<div
+							class="relative border-b border-blue-200/30 bg-gradient-to-r from-blue-50/90 to-indigo-50/90 px-8 py-6"
+						>
+							<div class="flex items-center gap-3">
+								<div class="rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 p-3 shadow-lg">
+									<Building size={20} class="text-white" />
+								</div>
+								<h3 class="text-xl font-black text-blue-900">Processus Métier</h3>
+							</div>
 						</div>
-						<div class="p-4">
+						<div class="relative p-8">
 							{#each metierData.processus as processus}
-								<div class="mb-4">
+								<div class="mb-8 last:mb-0">
 									<div
-										class="flex cursor-pointer items-center rounded p-2 hover:bg-gray-50"
+										class="group/item flex cursor-pointer items-center rounded-2xl p-4 transition-all duration-300 hover:scale-[1.02] hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:shadow-xl"
 										onclick={() => toggleExpand(`processus-${processus.id}`)}
 										role="button"
 										tabindex="0"
 										onkeydown={(e) =>
 											e.key === 'Enter' && toggleExpand(`processus-${processus.id}`)}
 									>
-										{#if expandedItems[`processus-${processus.id}`]}
-											<ChevronDown size={16} class="mr-2" />
-										{:else}
-											<ChevronRight size={16} class="mr-2" />
-										{/if}
-										<Building size={16} class="mr-2 text-blue-600" />
-										<span class="font-medium">{processus.nom}</span>
+										<div class="flex w-full items-center gap-4">
+											<div
+												class="rounded-lg bg-gradient-to-br from-blue-100 to-indigo-100 p-2 transition-all duration-300 group-hover/item:scale-110"
+											>
+												{#if expandedItems[`processus-${processus.id}`]}
+													<ChevronDown
+														size={18}
+														class="text-blue-700 transition-transform duration-300"
+													/>
+												{:else}
+													<ChevronRight
+														size={18}
+														class="text-blue-700 transition-transform duration-300 group-hover/item:translate-x-1"
+													/>
+												{/if}
+											</div>
+											<div
+												class="rounded-lg bg-gradient-to-br from-blue-100 to-indigo-100 p-2 transition-all duration-300 group-hover/item:scale-110"
+											>
+												<Building size={18} class="text-blue-700" />
+											</div>
+											<span class="text-lg font-bold text-gray-900">{processus.nom}</span>
+										</div>
 									</div>
 									{#if expandedItems[`processus-${processus.id}`]}
-										<div class="mt-2 ml-6 space-y-2">
+										<div class="mt-6 ml-8 space-y-4">
 											{#each processus.sousProcessus as sp}
-												<div class="rounded border-l-4 border-blue-400 bg-gray-50 p-3">
-													<div class="text-sm font-medium">{sp.nom}</div>
-													<div class="mt-1 text-xs text-gray-600">
-														Acteurs: {sp.acteurs.join(', ')}
-													</div>
-													<div class="text-xs text-gray-600">
-														Sites: {sp.sites.join(', ')}
+												<div
+													class="group/sub relative overflow-hidden rounded-2xl border-l-4 border-blue-400 bg-gradient-to-r from-blue-50/80 via-white/90 to-indigo-50/50 p-6 shadow-lg transition-all duration-300 hover:scale-[1.01] hover:border-l-8 hover:shadow-xl"
+												>
+													<div
+														class="absolute inset-0 bg-gradient-to-r from-blue-100/20 to-indigo-100/20 opacity-0 transition-opacity duration-300 group-hover/sub:opacity-100"
+													></div>
+													<div class="relative">
+														<div class="mb-3 text-base font-bold text-gray-900">{sp.nom}</div>
+														<div class="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
+															<div class="flex items-center gap-2">
+																<Users size={14} class="text-blue-600" />
+																<span class="font-semibold text-gray-700">Acteurs:</span>
+																<span class="text-gray-600">{sp.acteurs.join(', ')}</span>
+															</div>
+															<div class="flex items-center gap-2">
+																<Database size={14} class="text-indigo-600" />
+																<span class="font-semibold text-gray-700">Sites:</span>
+																<span class="text-gray-600">{sp.sites.join(', ')}</span>
+															</div>
+														</div>
 													</div>
 												</div>
 											{/each}
@@ -389,70 +513,117 @@
 						</div>
 					</div>
 
-					<div class="rounded-lg border bg-white">
-						<div class="border-b bg-blue-50 px-4 py-3">
-							<h3 class="font-semibold text-blue-900">Acteurs & Organisation</h3>
+					<div
+						class="group hover:shadow-3xl relative overflow-hidden rounded-3xl border border-blue-200/50 bg-white/80 shadow-2xl backdrop-blur-sm transition-all duration-500 hover:scale-[1.02]"
+					>
+						<div
+							class="absolute inset-0 bg-gradient-to-br from-blue-50/80 via-transparent to-indigo-50/30"
+						></div>
+						<div
+							class="relative border-b border-blue-200/30 bg-gradient-to-r from-blue-50/90 to-indigo-50/90 px-8 py-6"
+						>
+							<div class="flex items-center gap-3">
+								<div class="rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 p-3 shadow-lg">
+									<Users size={20} class="text-white" />
+								</div>
+								<h3 class="text-xl font-black text-blue-900">Acteurs & Organisation</h3>
+							</div>
 						</div>
-						<div class="p-4">
-							{#each metierData.acteurs as acteur}
-								<div
-									class="flex items-center justify-between border-b p-3 last:border-b-0 hover:bg-gray-50"
-								>
-									<div class="flex items-center">
-										<Users size={16} class="mr-3 text-blue-600" />
-										<div>
-											<div class="text-sm font-medium">{acteur.nom}</div>
-											<div class="text-xs text-gray-600">{acteur.role}</div>
+						<div class="relative p-8">
+							<div class="space-y-4">
+								{#each metierData.acteurs as acteur}
+									<div
+										class="group/actor relative overflow-hidden rounded-2xl border border-blue-100/50 bg-gradient-to-r from-white/90 via-blue-50/30 to-white/90 p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:bg-gradient-to-r hover:from-blue-50/80 hover:to-indigo-50/50 hover:shadow-xl"
+									>
+										<div
+											class="absolute inset-0 bg-gradient-to-r from-blue-100/10 to-indigo-100/10 opacity-0 transition-opacity duration-300 group-hover/actor:opacity-100"
+										></div>
+										<div class="relative flex items-center justify-between">
+											<div class="flex items-center gap-4">
+												<div class="relative">
+													<div
+														class="rounded-xl bg-gradient-to-br from-blue-100 to-indigo-100 p-3 transition-all duration-300 group-hover/actor:scale-110"
+													>
+														<Users size={20} class="text-blue-700" />
+													</div>
+													<div
+														class="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-gradient-to-br from-green-400 to-green-500 opacity-0 shadow-sm transition-opacity duration-300 group-hover/actor:opacity-100"
+													></div>
+												</div>
+												<div class="space-y-1">
+													<div class="text-base font-bold text-gray-900">{acteur.nom}</div>
+													<div class="text-sm font-medium text-gray-600">{acteur.role}</div>
+												</div>
+											</div>
+											<div class="relative">
+												<span
+													class="relative z-10 rounded-full border border-blue-200/50 bg-gradient-to-r from-blue-100 to-indigo-100 px-4 py-2 text-sm font-bold text-blue-800 shadow-lg transition-all duration-300 group-hover/actor:scale-110"
+												>
+													{acteur.site}
+												</span>
+												<div
+													class="absolute inset-0 rounded-full bg-gradient-to-r from-blue-200 to-indigo-200 opacity-0 blur-sm transition-opacity duration-300 group-hover/actor:opacity-50"
+												></div>
+											</div>
 										</div>
 									</div>
-									<span class="rounded bg-blue-100 px-2 py-1 text-xs text-blue-800"
-										>{acteur.site}</span
-									>
-								</div>
-							{/each}
+								{/each}
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		{:else if selectedLayer === 'fonctionnel'}
 			<!-- Couche Fonctionnelle -->
-			<div class="space-y-6">
-				<div class="rounded-lg border bg-white">
-					<div class="border-b bg-green-50 px-4 py-3">
-						<h3 class="font-semibold text-green-900">Fonctions du SI</h3>
+			<div class="space-y-8">
+				<div class="overflow-hidden rounded-2xl border border-gray-200/50 bg-white shadow-xl">
+					<div
+						class="border-b border-green-200 bg-gradient-to-r from-green-50 to-green-100 px-6 py-4"
+					>
+						<h3 class="text-lg font-bold text-green-900">Fonctions du SI</h3>
 					</div>
-					<div class="p-4">
-						<div class="grid gap-4">
+					<div class="p-6">
+						<div class="grid gap-6">
 							{#each fonctionnelData.fonctions as fonction}
-								<div class="rounded-lg border p-4 transition-shadow hover:shadow-sm">
-									<div class="mb-3 flex items-center justify-between">
+								<div
+									class="rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6 transition-all duration-200 hover:border-green-300 hover:shadow-lg"
+								>
+									<div class="mb-4 flex items-center justify-between">
 										<div class="flex items-center">
-											<Settings size={16} class="mr-2 text-green-600" />
-											<h4 class="font-semibold">{fonction.nom}</h4>
+											<div class="mr-3 rounded-lg bg-green-100 p-2">
+												<Settings size={18} class="text-green-600" />
+											</div>
+											<h4 class="text-lg font-bold text-gray-900">{fonction.nom}</h4>
 										</div>
 										<span
-											class="rounded-full border px-3 py-1 text-sm font-medium {getStatusColor(
+											class="rounded-full border px-4 py-2 text-sm font-semibold shadow-sm {getStatusColor(
 												fonction.statut
 											)}"
 										>
 											{fonction.statut}
 										</span>
 									</div>
-									<p class="mb-3 text-sm text-gray-600">{fonction.description}</p>
-									<div class="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
-										<div>
-											<div class="mb-1 font-medium text-gray-700">Flux principaux:</div>
-											<ul class="space-y-1">
+									<p class="mb-5 text-sm leading-relaxed text-gray-700">{fonction.description}</p>
+									<div class="grid grid-cols-1 gap-6 text-sm md:grid-cols-2">
+										<div class="rounded-lg bg-green-50 p-4">
+											<div class="mb-2 font-semibold text-green-800">Flux principaux:</div>
+											<ul class="space-y-2">
 												{#each fonction.flux as flux}
-													<li class="text-gray-600">• {flux}</li>
+													<li class="flex items-center text-gray-700">
+														<div class="mr-2 h-2 w-2 rounded-full bg-green-400"></div>
+														{flux}
+													</li>
 												{/each}
 											</ul>
 										</div>
-										<div>
-											<div class="mb-1 font-medium text-gray-700">Données manipulées:</div>
-											<ul class="space-y-1">
+										<div class="rounded-lg bg-blue-50 p-4">
+											<div class="mb-2 font-semibold text-blue-800">Données manipulées:</div>
+											<ul class="space-y-2">
 												{#each fonction.donnees as donnee}
-													<li class="text-gray-600">• {donnee}</li>
+													<li class="flex items-center text-gray-700">
+														<div class="mr-2 h-2 w-2 rounded-full bg-blue-400"></div>
+														{donnee}
+													</li>
 												{/each}
 											</ul>
 										</div>
@@ -465,37 +636,47 @@
 			</div>
 		{:else if selectedLayer === 'applicatif'}
 			<!-- Couche Applicative -->
-			<div class="space-y-6">
-				<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-					<div class="rounded-lg border bg-white lg:col-span-2">
-						<div class="border-b bg-yellow-50 px-4 py-3">
-							<h3 class="font-semibold text-yellow-900">Portfolio Applicatif</h3>
+			<div class="space-y-8">
+				<div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+					<div
+						class="overflow-hidden rounded-2xl border border-gray-200/50 bg-white shadow-xl lg:col-span-2"
+					>
+						<div
+							class="border-b border-yellow-200 bg-gradient-to-r from-yellow-50 to-yellow-100 px-6 py-4"
+						>
+							<h3 class="text-lg font-bold text-yellow-900">Portfolio Applicatif</h3>
 						</div>
-						<div class="p-4">
-							<div class="space-y-4">
+						<div class="p-6">
+							<div class="space-y-6">
 								{#each applicatifData.applications as app, idx}
 									<div
-										class="cursor-pointer rounded-lg border p-4 transition-all {selectedBlock ===
+										class="cursor-pointer rounded-2xl border border-gray-200 p-6 transition-all duration-300 hover:scale-[1.02] {selectedBlock ===
 										`app-${idx}`
-											? 'border-yellow-500 bg-yellow-50'
-											: 'hover:shadow-sm'}"
+											? 'border-yellow-400 bg-gradient-to-br from-yellow-50 to-yellow-100 shadow-xl'
+											: 'bg-gradient-to-br from-white to-gray-50 hover:border-yellow-300 hover:shadow-lg'}"
 										onclick={() => selectBlock(`app-${idx}`)}
 										role="button"
 										tabindex="0"
 										onkeydown={(e) => e.key === 'Enter' && selectBlock(`app-${idx}`)}
 									>
-										<div class="mb-3 flex items-center justify-between">
+										<div class="mb-4 flex items-center justify-between">
 											<div class="flex items-center">
-												<Database size={16} class="mr-2 text-yellow-600" />
+												<div class="mr-3 rounded-lg bg-yellow-100 p-2">
+													<Database size={18} class="text-yellow-600" />
+												</div>
 												<div>
-													<h4 class="font-semibold">{app.nom}</h4>
-													<span class="text-xs text-gray-600">{app.type} - {app.domaine}</span>
+													<h4 class="font-bold text-gray-900">{app.nom}</h4>
+													<span class="text-xs font-medium text-gray-600"
+														>{app.type} - {app.domaine}</span
+													>
 												</div>
 											</div>
-											<div class="flex items-center gap-2">
-												<div class="h-3 w-3 rounded-full {getCriticiteColor(app.criticite)}"></div>
+											<div class="flex items-center gap-3">
+												<div
+													class="h-3 w-3 rounded-full shadow-sm {getCriticiteColor(app.criticite)}"
+												></div>
 												<span
-													class="rounded border px-2 py-1 text-xs font-medium {getStatusColor(
+													class="rounded-full border px-3 py-1 text-xs font-semibold shadow-sm {getStatusColor(
 														app.conformite
 													)}"
 												>
@@ -504,23 +685,26 @@
 											</div>
 										</div>
 										<div class="grid grid-cols-2 gap-4 text-sm">
-											<div>
-												<span class="font-medium">Utilisateurs:</span>
-												{app.users}
+											<div class="rounded-lg bg-gray-50 p-3">
+												<span class="font-semibold text-gray-700">Utilisateurs:</span>
+												<div class="text-gray-600">{app.users}</div>
 											</div>
-											<div>
-												<span class="font-medium">Sites:</span>
-												{app.sites.join(', ')}
+											<div class="rounded-lg bg-gray-50 p-3">
+												<span class="font-semibold text-gray-700">Sites:</span>
+												<div class="text-gray-600">{app.sites.join(', ')}</div>
 											</div>
 										</div>
 										{#if selectedBlock === `app-${idx}`}
-											<div class="mt-4 rounded border-t bg-white p-3 pt-3">
-												<div class="mb-2 text-sm font-medium text-red-700">Risques identifiés:</div>
-												<ul class="space-y-1">
+											<div class="mt-6 rounded-xl border border-red-200 bg-white p-4 shadow-sm">
+												<div class="mb-3 flex items-center text-sm font-bold text-red-700">
+													<AlertTriangle size={16} class="mr-2" />
+													Risques identifiés:
+												</div>
+												<ul class="space-y-2">
 													{#each app.risques as risque}
-														<li class="flex items-center text-sm text-red-600">
-															<AlertTriangle size={12} class="mr-1" />
-															{risque}
+														<li class="flex items-start text-sm text-red-600">
+															<AlertTriangle size={12} class="mt-1 mr-2 flex-shrink-0" />
+															<span>{risque}</span>
 														</li>
 													{/each}
 												</ul>
@@ -532,22 +716,28 @@
 						</div>
 					</div>
 
-					<div class="rounded-lg border bg-white">
-						<div class="border-b bg-yellow-50 px-4 py-3">
-							<h3 class="font-semibold text-yellow-900">Données</h3>
+					<div class="overflow-hidden rounded-2xl border border-gray-200/50 bg-white shadow-xl">
+						<div
+							class="border-b border-yellow-200 bg-gradient-to-r from-yellow-50 to-yellow-100 px-6 py-4"
+						>
+							<h3 class="text-lg font-bold text-yellow-900">Données</h3>
 						</div>
-						<div class="p-4">
-							<div class="space-y-3">
+						<div class="p-6">
+							<div class="space-y-4">
 								{#each applicatifData.donnees as donnee}
-									<div class="rounded border p-3">
-										<div class="text-sm font-medium">{donnee.nom}</div>
-										<div class="mt-1 text-xs text-gray-600">
+									<div
+										class="rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-4 transition-shadow hover:shadow-md"
+									>
+										<div class="mb-2 text-sm font-bold text-gray-900">{donnee.nom}</div>
+										<div
+											class="mb-3 inline-block rounded-lg bg-gray-100 px-3 py-1 text-xs text-gray-600"
+										>
 											Source: {donnee.source}
 										</div>
-										<div class="mt-2 flex justify-between">
-											<span class="text-xs">Qualité:</span>
+										<div class="flex items-center justify-between">
+											<span class="text-xs font-medium text-gray-700">Qualité:</span>
 											<span
-												class="rounded px-2 py-1 text-xs {getStatusColor(
+												class="rounded-full px-3 py-1 text-xs font-semibold shadow-sm {getStatusColor(
 													donnee.qualite.toLowerCase()
 												)}"
 											>
@@ -563,63 +753,81 @@
 			</div>
 		{:else if selectedLayer === 'technique'}
 			<!-- Couche Technique -->
-			<div class="space-y-6">
-				<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-					<div class="rounded-lg border bg-white lg:col-span-2">
-						<div class="border-b bg-red-50 px-4 py-3">
-							<h3 class="font-semibold text-red-900">Infrastructure</h3>
+			<div class="space-y-8">
+				<div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+					<div
+						class="overflow-hidden rounded-2xl border border-gray-200/50 bg-white shadow-xl lg:col-span-2"
+					>
+						<div class="border-b border-red-200 bg-gradient-to-r from-red-50 to-red-100 px-6 py-4">
+							<h3 class="text-lg font-bold text-red-900">Infrastructure</h3>
 						</div>
-						<div class="p-4">
-							<div class="space-y-4">
+						<div class="p-6">
+							<div class="space-y-6">
 								{#each techniqueData.infrastructure as infra}
-									<div class="rounded-lg border p-4">
-										<div class="mb-3 flex items-center justify-between">
+									<div
+										class="rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6 transition-all duration-200 hover:shadow-lg"
+									>
+										<div class="mb-4 flex items-center justify-between">
 											<div class="flex items-center">
-												<Server size={16} class="mr-2 text-red-600" />
+												<div class="mr-3 rounded-lg bg-red-100 p-2">
+													<Server size={18} class="text-red-600" />
+												</div>
 												<div>
-													<h4 class="font-semibold">{infra.nom}</h4>
-													<span class="text-xs text-gray-600"
+													<h4 class="font-bold text-gray-900">{infra.nom}</h4>
+													<span class="text-xs font-medium text-gray-600"
 														>{infra.type} - {infra.localisation}</span
 													>
 												</div>
 											</div>
 											<span
-												class="rounded-full border px-3 py-1 text-sm font-medium {getStatusColor(
+												class="rounded-full border px-4 py-2 text-sm font-semibold shadow-sm {getStatusColor(
 													infra.statut
 												)}"
 											>
 												{infra.statut}
 											</span>
 										</div>
-										<div class="mb-3 grid grid-cols-2 gap-3 text-sm lg:grid-cols-3">
+										<div class="mb-4 grid grid-cols-2 gap-4 text-sm lg:grid-cols-3">
 											{#if infra.capacite}
-												<div><span class="font-medium">Capacité:</span> {infra.capacite}</div>
+												<div class="rounded-lg bg-blue-50 p-3">
+													<span class="font-semibold text-blue-800">Capacité:</span>
+													<div class="text-gray-700">{infra.capacite}</div>
+												</div>
 											{/if}
 											{#if infra.utilisation}
-												<div><span class="font-medium">Utilisation:</span> {infra.utilisation}</div>
+												<div class="rounded-lg bg-green-50 p-3">
+													<span class="font-semibold text-green-800">Utilisation:</span>
+													<div class="text-gray-700">{infra.utilisation}</div>
+												</div>
 											{/if}
 											{#if infra.bande_passante}
-												<div>
-													<span class="font-medium">Bande passante:</span>
-													{infra.bande_passante}
+												<div class="rounded-lg bg-purple-50 p-3">
+													<span class="font-semibold text-purple-800">Bande passante:</span>
+													<div class="text-gray-700">{infra.bande_passante}</div>
 												</div>
 											{/if}
 											{#if infra.disponibilite}
-												<div>
-													<span class="font-medium">Disponibilité:</span>
-													{infra.disponibilite}
+												<div class="rounded-lg bg-orange-50 p-3">
+													<span class="font-semibold text-orange-800">Disponibilité:</span>
+													<div class="text-gray-700">{infra.disponibilite}</div>
 												</div>
 											{/if}
-											<div><span class="font-medium">Redondance:</span> {infra.redondance}</div>
+											<div class="rounded-lg bg-gray-50 p-3">
+												<span class="font-semibold text-gray-800">Redondance:</span>
+												<div class="text-gray-700">{infra.redondance}</div>
+											</div>
 										</div>
 										{#if infra.risques}
-											<div>
-												<div class="mb-1 text-sm font-medium text-red-700">Risques:</div>
-												<ul class="space-y-1">
+											<div class="rounded-xl border border-red-200 bg-red-50 p-4">
+												<div class="mb-2 flex items-center text-sm font-bold text-red-700">
+													<AlertTriangle size={16} class="mr-2" />
+													Risques:
+												</div>
+												<ul class="space-y-2">
 													{#each infra.risques as risque}
-														<li class="flex items-center text-sm text-red-600">
-															<AlertTriangle size={12} class="mr-1" />
-															{risque}
+														<li class="flex items-start text-sm text-red-600">
+															<AlertTriangle size={12} class="mt-1 mr-2 flex-shrink-0" />
+															<span>{risque}</span>
 														</li>
 													{/each}
 												</ul>
@@ -631,48 +839,66 @@
 						</div>
 					</div>
 
-					<div class="rounded-lg border bg-white">
-						<div class="border-b bg-red-50 px-4 py-3">
-							<h3 class="font-semibold text-red-900">Sécurité</h3>
+					<div class="overflow-hidden rounded-2xl border border-gray-200/50 bg-white shadow-xl">
+						<div class="border-b border-red-200 bg-gradient-to-r from-red-50 to-red-100 px-6 py-4">
+							<h3 class="text-lg font-bold text-red-900">Sécurité</h3>
 						</div>
-						<div class="p-4">
-							<div class="space-y-4">
-								<div class="rounded border p-3">
-									<div class="mb-2 flex items-center justify-between">
-										<span class="font-medium">Niveau global</span>
+						<div class="p-6">
+							<div class="space-y-6">
+								<div
+									class="rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-4"
+								>
+									<div class="mb-3 flex items-center justify-between">
+										<span class="font-bold text-gray-900">Niveau global</span>
 										<span
-											class="rounded px-2 py-1 text-xs font-medium {getStatusColor('critique')}"
+											class="rounded-full px-3 py-2 text-xs font-bold shadow-sm {getStatusColor(
+												'critique'
+											)}"
 										>
 											{techniqueData.securite.niveau}
 										</span>
 									</div>
 								</div>
 
-								<div class="rounded border p-3">
-									<div class="mb-2 text-sm font-medium">Mesures en place:</div>
-									<ul class="space-y-1">
+								<div
+									class="rounded-xl border border-gray-200 bg-gradient-to-br from-green-50 to-white p-4"
+								>
+									<div class="mb-3 text-sm font-bold text-green-800">Mesures en place:</div>
+									<ul class="space-y-2">
 										{#each techniqueData.securite.mesures as mesure}
-											<li class="text-sm text-gray-600">• {mesure}</li>
-										{/each}
-									</ul>
-								</div>
-
-								<div class="rounded border bg-red-50 p-3">
-									<div class="mb-2 text-sm font-medium text-red-700">Manques critiques:</div>
-									<ul class="space-y-1">
-										{#each techniqueData.securite.manques as manque}
-											<li class="flex items-center text-sm text-red-600">
-												<AlertTriangle size={12} class="mr-1" />
-												{manque}
+											<li class="flex items-center text-sm text-gray-700">
+												<div class="mr-2 h-2 w-2 rounded-full bg-green-400"></div>
+												{mesure}
 											</li>
 										{/each}
 									</ul>
 								</div>
 
-								<div class="rounded border p-3">
+								<div
+									class="rounded-xl border border-red-200 bg-gradient-to-br from-red-50 to-white p-4"
+								>
+									<div class="mb-3 flex items-center text-sm font-bold text-red-700">
+										<AlertTriangle size={16} class="mr-2" />
+										Manques critiques:
+									</div>
+									<ul class="space-y-2">
+										{#each techniqueData.securite.manques as manque}
+											<li class="flex items-start text-sm text-red-600">
+												<AlertTriangle size={12} class="mt-1 mr-2 flex-shrink-0" />
+												<span>{manque}</span>
+											</li>
+										{/each}
+									</ul>
+								</div>
+
+								<div
+									class="rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-4"
+								>
 									<div class="flex items-center justify-between">
-										<span class="text-sm font-medium">Incidents 12 derniers mois:</span>
-										<span class="rounded bg-red-100 px-2 py-1 text-xs font-bold text-red-800">
+										<span class="text-sm font-bold text-gray-900">Incidents 12 derniers mois:</span>
+										<span
+											class="rounded-full bg-red-100 px-4 py-2 text-sm font-bold text-red-800 shadow-sm"
+										>
 											{techniqueData.securite.incidents}
 										</span>
 									</div>
@@ -686,24 +912,57 @@
 	</div>
 
 	<!-- Footer avec synthèse des risques -->
-	<div class="mt-8 border-t bg-white">
-		<div class="px-6 py-4">
-			<div class="flex items-center justify-between">
-				<div class="flex items-center gap-6">
-					<div class="flex items-center gap-2">
-						<div class="h-3 w-3 rounded-full bg-red-500"></div>
-						<span class="text-sm font-medium">Risques Critiques: 8</span>
+	<div class="relative mt-16 border-t border-gray-200/30 bg-white/80 shadow-2xl backdrop-blur-xl">
+		<div
+			class="absolute inset-0 bg-gradient-to-r from-slate-50/80 via-white/50 to-slate-50/80"
+		></div>
+		<div class="relative px-4 py-8 sm:px-6 lg:px-8">
+			<div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+				<div class="flex flex-wrap items-center gap-8">
+					<div class="group flex items-center gap-4">
+						<div class="relative">
+							<div
+								class="h-5 w-5 rounded-full bg-gradient-to-br from-red-400 to-red-600 shadow-lg transition-transform duration-300 group-hover:scale-110"
+							></div>
+							<div
+								class="absolute inset-0 animate-ping rounded-full bg-red-400 opacity-75 group-hover:opacity-100"
+							></div>
+						</div>
+						<span class="text-base font-black text-gray-900"
+							>Risques Critiques: <span class="text-red-600">8</span></span
+						>
 					</div>
-					<div class="flex items-center gap-2">
-						<div class="h-3 w-3 rounded-full bg-yellow-500"></div>
-						<span class="text-sm font-medium">Attention: 5</span>
+					<div class="group flex items-center gap-4">
+						<div class="relative">
+							<div
+								class="h-5 w-5 rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 shadow-lg transition-transform duration-300 group-hover:scale-110"
+							></div>
+							<div
+								class="absolute inset-0 animate-pulse rounded-full bg-yellow-400 opacity-0 group-hover:opacity-50"
+							></div>
+						</div>
+						<span class="text-base font-black text-gray-900"
+							>Attention: <span class="text-orange-600">5</span></span
+						>
 					</div>
-					<div class="flex items-center gap-2">
-						<div class="h-3 w-3 rounded-full bg-green-500"></div>
-						<span class="text-sm font-medium">Conformes: 2</span>
+					<div class="group flex items-center gap-4">
+						<div class="relative">
+							<div
+								class="h-5 w-5 rounded-full bg-gradient-to-br from-green-400 to-green-600 shadow-lg transition-transform duration-300 group-hover:scale-110"
+							></div>
+							<div
+								class="absolute inset-0 animate-pulse rounded-full bg-green-400 opacity-0 group-hover:opacity-50"
+							></div>
+						</div>
+						<span class="text-base font-black text-gray-900"
+							>Conformes: <span class="text-green-600">2</span></span
+						>
 					</div>
 				</div>
-				<div class="text-sm text-gray-600">
+				<div class="flex items-center gap-3 text-sm font-bold text-gray-600">
+					<div class="rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 p-2">
+						<Database size={16} class="text-gray-600" />
+					</div>
 					Dernière mise à jour: {new Date().toLocaleDateString('fr-FR')}
 				</div>
 			</div>
