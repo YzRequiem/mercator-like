@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import {
 		ChevronDown,
 		ChevronRight,
@@ -20,6 +21,18 @@
 		dataActions
 	} from '$lib/stores';
 
+	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
+	import ToastContainer from '$lib/components/ToastContainer.svelte';
+
+	// Types pour les sous-processus
+	interface SousProcessus {
+		id: string;
+		nom: string;
+		acteurs: string[];
+		sites: string[];
+		description?: string;
+	}
+
 	// Utilisation des stores réactifs
 	const metierData = $derived($metierStore);
 	const fonctionnelData = $derived($fonctionnelStore);
@@ -27,6 +40,11 @@
 	const techniqueData = $derived($techniqueStore);
 	const stats = $derived($statistiques);
 	const state = $derived($appState);
+
+	// Charger les données depuis l'API au démarrage
+	onMount(async () => {
+		await dataActions.loadData();
+	});
 
 	// Variables locales dérivées des stores
 	let selectedLayer = $derived(state.selectedLayer);
@@ -115,8 +133,10 @@
 				return 'bg-orange-500';
 			case 'Moyenne':
 				return 'bg-yellow-500';
-			default:
+			case 'Faible':
 				return 'bg-green-500';
+			default:
+				return 'bg-gray-500';
 		}
 	}
 
@@ -157,6 +177,12 @@
 </svelte:head>
 
 <div class="min-h-screen w-full bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50">
+	<!-- Composant de chargement -->
+	<LoadingSpinner isLoading={state.isLoading} message="Chargement des données depuis l'API..." />
+
+	<!-- Conteneur de notifications -->
+	<ToastContainer />
+
 	<!-- Header Mercator -->
 	<div class="relative border-b border-gray-200/30 bg-white/80 shadow-2xl backdrop-blur-xl">
 		<div
@@ -173,6 +199,24 @@
 					<p class="font-medium text-gray-600">Cartographie du Système d'Information</p>
 				</div>
 				<div class="flex items-center gap-6">
+					<!-- Liens de navigation -->
+					<div class="flex items-center gap-4">
+						<a
+							href="/diagnostic"
+							class="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-blue-50/50 hover:text-blue-600"
+						>
+							<Settings size={16} />
+							Diagnostic API
+						</a>
+						<a
+							href="/test"
+							class="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-green-50/50 hover:text-green-600"
+						>
+							<Database size={16} />
+							Test API
+						</a>
+					</div>
+
 					<div class="text-right">
 						<div class="flex items-center gap-2 text-sm font-bold text-gray-900">
 							<Users size={16} class="text-blue-600" />
@@ -387,7 +431,7 @@
 										<div class="mb-4">
 											<div class="mb-2 text-sm font-semibold text-gray-700">Activités:</div>
 											<div class="flex flex-wrap gap-1">
-												{#each etablissement.activites as activite}
+												{#each etablissement.activites || [] as activite}
 													<span class="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800">
 														{activite}
 													</span>
@@ -398,7 +442,7 @@
 										<div class="mb-4">
 											<div class="mb-2 text-sm font-semibold text-gray-700">Équipements:</div>
 											<ul class="space-y-1">
-												{#each etablissement.equipements as equipement}
+												{#each etablissement.equipements || [] as equipement}
 													<li class="flex items-center text-sm text-gray-600">
 														<div class="mr-2 h-2 w-2 rounded-full bg-green-400"></div>
 														{equipement}
@@ -484,7 +528,8 @@
 									</div>
 									{#if expandedItems[`processus-${processus.id}`]}
 										<div class="mt-6 ml-8 space-y-4">
-											{#each processus.sousProcessus as sp}
+											{#each processus.sousProcessus || [] as sp}
+												{@const sousProc = sp as SousProcessus}
 												<div
 													class="group/sub relative overflow-hidden rounded-2xl border-l-4 border-blue-400 bg-gradient-to-r from-blue-50/80 via-white/90 to-indigo-50/50 p-6 shadow-lg transition-all duration-300 hover:scale-[1.01] hover:border-l-8 hover:shadow-xl"
 												>
@@ -492,17 +537,21 @@
 														class="absolute inset-0 bg-gradient-to-r from-blue-100/20 to-indigo-100/20 opacity-0 transition-opacity duration-300 group-hover/sub:opacity-100"
 													></div>
 													<div class="relative">
-														<div class="mb-3 text-base font-bold text-gray-900">{sp.nom}</div>
+														<div class="mb-3 text-base font-bold text-gray-900">{sousProc.nom}</div>
 														<div class="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
 															<div class="flex items-center gap-2">
 																<Users size={14} class="text-blue-600" />
 																<span class="font-semibold text-gray-700">Acteurs:</span>
-																<span class="text-gray-600">{sp.acteurs.join(', ')}</span>
+																<span class="text-gray-600"
+																	>{(sousProc.acteurs || []).join(', ')}</span
+																>
 															</div>
 															<div class="flex items-center gap-2">
 																<Database size={14} class="text-indigo-600" />
 																<span class="font-semibold text-gray-700">Sites:</span>
-																<span class="text-gray-600">{sp.sites.join(', ')}</span>
+																<span class="text-gray-600"
+																	>{(sousProc.sites || []).join(', ')}</span
+																>
 															</div>
 														</div>
 													</div>
@@ -599,10 +648,10 @@
 										</div>
 										<span
 											class="rounded-full border px-4 py-2 text-sm font-semibold shadow-sm {getStatusColor(
-												fonction.statut
+												fonction.statut || 'inconnu'
 											)}"
 										>
-											{fonction.statut}
+											{fonction.statut || 'Non défini'}
 										</span>
 									</div>
 									<p class="mb-5 text-sm leading-relaxed text-gray-700">{fonction.description}</p>
@@ -610,7 +659,7 @@
 										<div class="rounded-lg bg-green-50 p-4">
 											<div class="mb-2 font-semibold text-green-800">Flux principaux:</div>
 											<ul class="space-y-2">
-												{#each fonction.flux as flux}
+												{#each fonction.flux || [] as flux}
 													<li class="flex items-center text-gray-700">
 														<div class="mr-2 h-2 w-2 rounded-full bg-green-400"></div>
 														{flux}
@@ -621,7 +670,7 @@
 										<div class="rounded-lg bg-blue-50 p-4">
 											<div class="mb-2 font-semibold text-blue-800">Données manipulées:</div>
 											<ul class="space-y-2">
-												{#each fonction.donnees as donnee}
+												{#each fonction.donnees || [] as donnee}
 													<li class="flex items-center text-gray-700">
 														<div class="mr-2 h-2 w-2 rounded-full bg-blue-400"></div>
 														{donnee}
@@ -675,14 +724,16 @@
 											</div>
 											<div class="flex items-center gap-3">
 												<div
-													class="h-3 w-3 rounded-full shadow-sm {getCriticiteColor(app.criticite)}"
+													class="h-3 w-3 rounded-full shadow-sm {getCriticiteColor(
+														app.criticite || 'Non définie'
+													)}"
 												></div>
 												<span
 													class="rounded-full border px-3 py-1 text-xs font-semibold shadow-sm {getStatusColor(
-														app.conformite
+														app.conformite || 'inconnu'
 													)}"
 												>
-													{app.conformite}
+													{app.conformite || 'Non défini'}
 												</span>
 											</div>
 										</div>
@@ -693,7 +744,7 @@
 											</div>
 											<div class="rounded-lg bg-gray-50 p-3">
 												<span class="font-semibold text-gray-700">Sites:</span>
-												<div class="text-gray-600">{app.sites.join(', ')}</div>
+												<div class="text-gray-600">{(app.sites || []).join(', ')}</div>
 											</div>
 										</div>
 										{#if selectedBlock === `app-${idx}`}
@@ -703,7 +754,7 @@
 													Risques identifiés:
 												</div>
 												<ul class="space-y-2">
-													{#each app.risques as risque}
+													{#each app.risques || [] as risque}
 														<li class="flex items-start text-sm text-red-600">
 															<AlertTriangle size={12} class="mt-1 mr-2 flex-shrink-0" />
 															<span>{risque}</span>
@@ -740,10 +791,10 @@
 											<span class="text-xs font-medium text-gray-700">Qualité:</span>
 											<span
 												class="rounded-full px-3 py-1 text-xs font-semibold shadow-sm {getStatusColor(
-													donnee.qualite.toLowerCase()
+													(donnee.qualite || 'inconnue').toLowerCase()
 												)}"
 											>
-												{donnee.qualite}
+												{donnee.qualite || 'Non définie'}
 											</span>
 										</div>
 									</div>
@@ -793,10 +844,10 @@
 										<span class="text-xs font-medium text-gray-600">Statut:</span>
 										<span
 											class="rounded-full px-2 py-1 text-xs font-bold {getStatusColor(
-												incident.statut
+												incident.statut || 'inconnu'
 											)}"
 										>
-											{incident.statut}
+											{incident.statut || 'Non défini'}
 										</span>
 									</div>
 								</div>
@@ -832,10 +883,10 @@
 											</div>
 											<span
 												class="rounded-full border px-4 py-2 text-sm font-semibold shadow-sm {getStatusColor(
-													infra.statut
+													infra.statut || 'inconnu'
 												)}"
 											>
-												{infra.statut}
+												{infra.statut || 'Non défini'}
 											</span>
 										</div>
 										<div class="mb-4 grid grid-cols-2 gap-4 text-sm lg:grid-cols-3">
@@ -916,10 +967,15 @@
 								>
 									<div class="mb-3 text-sm font-bold text-green-800">Mesures en place:</div>
 									<ul class="space-y-2">
-										{#each $techniqueStore.securite.mesures as mesure}
-											<li class="flex items-center text-sm text-gray-700">
-												<div class="mr-2 h-2 w-2 rounded-full bg-green-400"></div>
-												{mesure}
+										{#each $techniqueStore.securite.mesures || [] as mesure}
+											<li class="flex items-center justify-between text-sm">
+												<div class="flex items-center text-gray-700">
+													<div class="mr-2 h-2 w-2 rounded-full bg-green-400"></div>
+													{mesure.nom || mesure}
+												</div>
+												{#if mesure.statut}
+													<span class="text-xs text-gray-500 italic">({mesure.statut})</span>
+												{/if}
 											</li>
 										{/each}
 									</ul>
@@ -933,10 +989,17 @@
 										Manques critiques:
 									</div>
 									<ul class="space-y-2">
-										{#each $techniqueStore.securite.manques as manque}
-											<li class="flex items-start text-sm text-red-600">
-												<AlertTriangle size={12} class="mt-1 mr-2 flex-shrink-0" />
-												<span>{manque}</span>
+										{#each $techniqueStore.securite.manques || [] as manque}
+											<li class="flex items-start justify-between text-sm">
+												<div class="flex items-start text-red-600">
+													<AlertTriangle size={12} class="mt-1 mr-2 flex-shrink-0" />
+													<span>{manque.nom || manque}</span>
+												</div>
+												{#if manque.priorite}
+													<span class="text-xs font-semibold text-red-500">
+														{manque.priorite}
+													</span>
+												{/if}
 											</li>
 										{/each}
 									</ul>

@@ -32,6 +32,7 @@ export interface Processus {
 	id: string;
 	nom: string;
 	sous_processus?: any[];
+	sousProcessus?: any[]; // Alias pour compatibilité frontend
 }
 
 export interface Acteur {
@@ -229,7 +230,17 @@ export class ApiClient {
 
 	// Processus
 	async getProcessus(): Promise<ApiListResponse<Processus>> {
-		return this.getAll<Processus>('processus');
+		const response = await this.getAll<Processus>('processus');
+
+		// Transformation pour ajouter sousProcessus en alias de sous_processus
+		if (response.success && response.data) {
+			response.data = response.data.map((processus) => ({
+				...processus,
+				sousProcessus: processus.sous_processus || []
+			}));
+		}
+
+		return response;
 	}
 
 	async getProcessusById(id: string): Promise<ApiResponse<Processus>> {
