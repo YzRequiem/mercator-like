@@ -1,0 +1,186 @@
+{
+	"infrastructure": [
+		{
+			"id": "nas-synology-idf",
+			"nom": "NAS Synology IDF",
+			"type": "Stockage local",
+			"localisation": "Île-de-France",
+			"statut": "Opérationnel",
+			"capacite": "Non spécifiée",
+			"utilisation": "Inconnue",
+			"redondance": "Aucune",
+			"modele": "Synology DS918+",
+			"date_installation": "2018-03-15",
+			"garantie": "Expirée",
+			"cout_acquisition": 450,
+			"maintenance": "Interne",
+			"risques": ["Pas de sauvegarde distante", "Point de défaillance unique", "Pas de cloud"]
+		},
+		{
+			"id": "nas-synology-ara",
+			"nom": "NAS Synology ARA",
+			"type": "Stockage local",
+			"localisation": "Auvergne-Rhône-Alpes",
+			"statut": "Opérationnel",
+			"capacite": "Non spécifiée",
+			"utilisation": "Inconnue",
+			"redondance": "Aucune",
+			"modele": "Synology DS418",
+			"date_installation": "2019-09-20",
+			"garantie": "Expirée",
+			"cout_acquisition": 350,
+			"maintenance": "Interne",
+			"risques": ["Pas de sauvegarde distante", "Point de défaillance unique", "Isolation site"]
+		},
+		{
+			"id": "nas-synology-paca",
+			"nom": "NAS Synology PACA",
+			"type": "Stockage local",
+			"localisation": "PACA",
+			"statut": "Opérationnel",
+			"capacite": "Non spécifiée",
+			"utilisation": "Inconnue",
+			"redondance": "Aucune",
+			"modele": "Synology DS218+",
+			"date_installation": "2020-06-10",
+			"garantie": "Active",
+			"cout_acquisition": 300,
+			"maintenance": "Interne",
+			"risques": ["Pas de sauvegarde distante", "Point de défaillance unique", "Isolation site"]
+		},
+		{
+			"id": "vpn-inter-sites",
+			"nom": "VPN Inter-sites",
+			"type": "Réseau",
+			"localisation": "Multi-sites",
+			"statut": "Instable",
+			"bande_passante": "Non spécifiée",
+			"disponibilite": "Problématique",
+			"redondance": "Aucune",
+			"fournisseur": "Orange Business",
+			"date_installation": "2015-01-15",
+			"cout_mensuel": 150,
+			"sla": "99.5%",
+			"risques": ["Indisponibilité récente", "Pas de lien de secours", "Impact sur activité"]
+		},
+		{
+			"id": "postes-travail",
+			"nom": "Postes de Travail",
+			"type": "Équipements utilisateur",
+			"localisation": "Tous sites",
+			"statut": "En service",
+			"nombre": "Non spécifié",
+			"os": "Non spécifié",
+			"redondance": "Aucune",
+			"modele": "Dell OptiPlex",
+			"age_moyen": "5 ans",
+			"cout_total": 45000,
+			"maintenance": "Garantie constructeur",
+			"risques": ["Tentative rançongiciel récente", "Sécurité insuffisante"]
+		}
+	],
+	"incidents": [
+		{
+			"id": "perte-donnees-2024",
+			"nom": "Perte de données",
+			"impact": "Critique",
+			"date": "2024-11-15",
+			"statut": "Résolu",
+			"description": "Perte de fichiers Excel suite à panne disque dur",
+			"duree": "2 jours",
+			"cout_estime": 5000,
+			"cause": "Défaillance matérielle",
+			"mesures_correctives": [
+				"Récupération partielle des données",
+				"Mise en place sauvegarde temporaire"
+			]
+		},
+		{
+			"id": "rupture-tracabilite-2024",
+			"nom": "Rupture de traçabilité",
+			"impact": "Critique",
+			"date": "2024-12-03",
+			"statut": "Non résolu",
+			"description": "Perte de documents papier de traçabilité",
+			"duree": "En cours",
+			"cout_estime": 15000,
+			"cause": "Processus manuel défaillant",
+			"mesures_correctives": ["Recherche des documents", "Reconstitution partielle"]
+		},
+		{
+			"id": "tentative-rancongiciel-2024",
+			"nom": "Tentative de rançongiciel",
+			"impact": "Critique",
+			"date": "2024-10-22",
+			"statut": "Contenu",
+			"description": "Tentative d'infection par rançongiciel sur poste IDF",
+			"duree": "4 heures",
+			"cout_estime": 2000,
+			"cause": "Email de phishing",
+			"mesures_correctives": [
+				"Isolation du poste infecté",
+				"Scan antivirus complet",
+				"Formation sensibilisation"
+			]
+		},
+		{
+			"id": "indisponibilite-vpn-2024",
+			"nom": "Indisponibilité VPN",
+			"impact": "Majeur",
+			"date": "2024-12-20",
+			"statut": "Récurrent",
+			"description": "Coupures fréquentes du VPN inter-sites",
+			"duree": "Récurrent",
+			"cout_estime": 8000,
+			"cause": "Infrastructure réseau vieillissante",
+			"mesures_correctives": ["Redémarrage équipements", "Contact fournisseur"]
+		}
+	],
+	"securite": {
+		"niveau": "Critique",
+		"score_global": 25,
+		"derniere_evaluation": "2024-12-01",
+		"mesures": [
+			{
+				"nom": "Antivirus basique",
+				"statut": "Actif",
+				"efficacite": "Limitée"
+			},
+			{
+				"nom": "VPN instable",
+				"statut": "Problématique",
+				"efficacite": "Insuffisante"
+			}
+		],
+		"manques": [
+			{
+				"nom": "Protection rançongiciel",
+				"priorite": "Critique",
+				"cout_estime": 5000
+			},
+			{
+				"nom": "Sauvegarde distante",
+				"priorite": "Critique",
+				"cout_estime": 8000
+			},
+			{
+				"nom": "Monitoring sécurité",
+				"priorite": "Haute",
+				"cout_estime": 12000
+			},
+			{
+				"nom": "Formation utilisateurs",
+				"priorite": "Haute",
+				"cout_estime": 3000
+			},
+			{
+				"nom": "Politique sécurité",
+				"priorite": "Moyenne",
+				"cout_estime": 2000
+			}
+		],
+		"incidents_total": 4,
+		"incidents_critiques": 3,
+		"incidents_majeurs": 1
+	}
+}

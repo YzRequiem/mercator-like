@@ -1,0 +1,136 @@
+{
+	"applications": [
+		{
+			"id": "excel-stocks",
+			"nom": "Excel Stocks",
+			"type": "Tableur",
+			"domaine": "Gestion des stocks",
+			"criticite": "Critique",
+			"statut": "En service",
+			"users": "Multi-utilisateurs",
+			"sites": ["IDF", "ARA", "PACA"],
+			"conformite": "Non conforme",
+			"version": "Microsoft Excel 2019",
+			"editeur": "Microsoft",
+			"cout_annuel": 0,
+			"date_mise_en_service": "2010-01-01",
+			"risques": [
+				"Perte de données récente",
+				"Versions multiples",
+				"Pas de traçabilité",
+				"Erreurs de saisie"
+			],
+			"fonctionnalites": ["Suivi des stocks", "Calculs automatiques", "Graphiques basiques"]
+		},
+		{
+			"id": "suivi-expeditions-papier",
+			"nom": "Suivi Expéditions Papier",
+			"type": "Processus manuel",
+			"domaine": "Logistique",
+			"criticite": "Critique",
+			"statut": "En service",
+			"users": "Tous sites",
+			"sites": ["IDF", "ARA", "PACA"],
+			"conformite": "Non conforme",
+			"version": "N/A",
+			"editeur": "Interne",
+			"cout_annuel": 0,
+			"date_mise_en_service": "2010-01-01",
+			"risques": [
+				"Rupture de traçabilité",
+				"Perte documents",
+				"Erreurs humaines",
+				"Conformité réglementaire"
+			],
+			"fonctionnalites": ["Suivi manuel", "Archivage papier", "Scan occasionnel"]
+		},
+		{
+			"id": "hubspot-crm",
+			"nom": "HubSpot CRM",
+			"type": "CRM SaaS",
+			"domaine": "Commercial",
+			"criticite": "Moyenne",
+			"statut": "En service",
+			"users": "Équipe commerciale",
+			"sites": ["IDF"],
+			"conformite": "Partielle",
+			"version": "Version gratuite",
+			"editeur": "HubSpot",
+			"cout_annuel": 0,
+			"date_mise_en_service": "2020-06-01",
+			"risques": ["Version gratuite limitée", "Fonctionnalités restreintes"],
+			"fonctionnalites": ["Gestion contacts", "Suivi opportunités", "Reporting basique"]
+		},
+		{
+			"id": "comptabilite-externe",
+			"nom": "Comptabilité Externe",
+			"type": "Service externalisé",
+			"domaine": "Finance",
+			"criticite": "Moyenne",
+			"statut": "En service",
+			"users": "Cabinet comptable",
+			"sites": ["Externe"],
+			"conformite": "Conforme",
+			"version": "N/A",
+			"editeur": "Cabinet externe",
+			"cout_annuel": 24000,
+			"date_mise_en_service": "2010-01-01",
+			"risques": ["Dépendance externe", "Délais de traitement"],
+			"fonctionnalites": ["Comptabilité générale", "Déclarations fiscales", "Bilans annuels"]
+		}
+	],
+	"donnees": [
+		{
+			"id": "stocks-entrepot",
+			"nom": "Stocks par entrepôt",
+			"source": "Excel",
+			"qualite": "Très faible",
+			"volume": "Élevé",
+			"frequence_maj": "Quotidienne",
+			"proprietaire": "Responsable Logistique",
+			"sensibilite": "Interne",
+			"retention": "5 ans",
+			"format": "xlsx",
+			"taille_estimee": "50 MB"
+		},
+		{
+			"id": "suivi-expeditions",
+			"nom": "Suivi expéditions",
+			"source": "Papier + Scans",
+			"qualite": "Très faible",
+			"volume": "Élevé",
+			"frequence_maj": "Quotidienne",
+			"proprietaire": "Équipes logistique",
+			"sensibilite": "Interne",
+			"retention": "10 ans",
+			"format": "PDF + Papier",
+			"taille_estimee": "2 GB"
+		},
+		{
+			"id": "contacts-clients",
+			"nom": "Contacts Clients",
+			"source": "HubSpot",
+			"qualite": "Moyenne",
+			"volume": "Moyen",
+			"frequence_maj": "Hebdomadaire",
+			"proprietaire": "Responsable Commercial",
+			"sensibilite": "Confidentiel",
+			"retention": "Indéterminée",
+			"format": "Base de données",
+			"taille_estimee": "100 MB"
+		},
+		{
+			"id": "donnees-comptables",
+			"nom": "Données Comptables",
+			"source": "Cabinet Externe",
+			"qualite": "Bonne",
+			"volume": "Moyen",
+			"frequence_maj": "Mensuelle",
+			"proprietaire": "Cabinet comptable",
+			"sensibilite": "Confidentiel",
+			"retention": "10 ans",
+			"format": "Logiciel comptable",
+			"taille_estimee": "500 MB"
+		}
+	]
+}

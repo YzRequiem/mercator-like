@@ -10,9 +10,28 @@
 		Settings
 	} from 'lucide-svelte';
 
-	let selectedLayer = $state('metier');
-	let expandedItems = $state<Record<string, boolean>>({});
-	let selectedBlock = $state<string | null>(null);
+	import {
+		metierStore,
+		fonctionnelStore,
+		applicatifStore,
+		techniqueStore,
+		appState,
+		statistiques,
+		dataActions
+	} from '$lib/stores';
+
+	// Utilisation des stores réactifs
+	const metierData = $derived($metierStore);
+	const fonctionnelData = $derived($fonctionnelStore);
+	const applicatifData = $derived($applicatifStore);
+	const techniqueData = $derived($techniqueStore);
+	const stats = $derived($statistiques);
+	const state = $derived($appState);
+
+	// Variables locales dérivées des stores
+	let selectedLayer = $derived(state.selectedLayer);
+	let expandedItems = $derived(state.expandedItems);
+	let selectedBlock = $derived(state.selectedBlock);
 
 	const layers = [
 		{
@@ -41,304 +60,17 @@
 		}
 	];
 
-	const metierData = {
-		processus: [
-			{
-				id: 'logistique',
-				nom: 'Logistique Médicale',
-				sousProcessus: [
-					{
-						nom: 'Réception',
-						acteurs: ['Responsable Logistique National'],
-						sites: ['IDF', 'ARA', 'PACA']
-					},
-					{
-						nom: 'Stockage',
-						acteurs: ['Responsable Site IDF', 'Responsable Site ARA'],
-						sites: ['IDF', 'ARA', 'PACA']
-					},
-					{
-						nom: 'Conditionnement',
-						acteurs: ['Responsable Qualité'],
-						sites: ['IDF', 'ARA', 'PACA']
-					},
-					{
-						nom: 'Livraison',
-						acteurs: ['Responsable Logistique National'],
-						sites: ['IDF', 'ARA', 'PACA']
-					}
-				]
-			},
-			{
-				id: 'commercial',
-				nom: 'Gestion Commerciale',
-				sousProcessus: [
-					{ nom: 'Gestion CRM', acteurs: ['Responsable Commercial'], sites: ['IDF'] },
-					{
-						nom: 'Relation Client',
-						acteurs: ['Responsable Commercial'],
-						sites: ['IDF', 'ARA', 'PACA']
-					}
-				]
-			},
-			{
-				id: 'administration',
-				nom: 'Administration & Finance',
-				sousProcessus: [
-					{ nom: 'Comptabilité', acteurs: ['Cabinet Externe'], sites: ['Externe'] },
-					{ nom: 'Gestion Administrative', acteurs: ['Directeur Général'], sites: ['IDF'] }
-				]
-			}
-		],
-		acteurs: [
-			{ nom: 'Directeur Général', site: 'IDF', role: 'Direction générale' },
-			{
-				nom: 'Responsable Logistique National',
-				site: 'IDF',
-				role: 'Coordination logistique nationale'
-			},
-			{ nom: 'Responsable Site Île-de-France', site: 'IDF', role: 'Opérations IDF' },
-			{ nom: 'Responsable Site Rhône-Alpes', site: 'ARA', role: 'Opérations ARA' },
-			{ nom: 'Responsable Qualité', site: 'IDF', role: 'Contrôle qualité et conformité' },
-			{ nom: 'Responsable Commercial', site: 'IDF', role: 'Gestion commerciale' },
-			{ nom: 'Équipe Informatique', site: 'IDF', role: 'Support IT et infrastructure' }
-		],
-		ecosysteme: [
-			{ nom: 'Hôpitaux', type: 'Client', relation: 'Fourniture dispositifs médicaux' },
-			{ nom: 'Cliniques', type: 'Client', relation: 'Fourniture dispositifs médicaux' },
-			{ nom: 'Pharmacies', type: 'Client', relation: 'Fourniture dispositifs médicaux' },
-			{ nom: 'Fournisseurs', type: 'Fournisseur', relation: 'Approvisionnement' },
-			{ nom: 'Cabinet de Comptabilité', type: 'Prestataire', relation: 'Services comptables' }
-		],
-		etablissements: [
-			{
-				nom: 'Site Île-de-France',
-				code: 'IDF',
-				adresse: 'Non spécifié',
-				statut: 'Siège social',
-				surface: 'Non spécifié',
-				collaborateurs: 'Non spécifié',
-				activites: ['Direction générale', 'Logistique', 'Commercial', 'Qualité', 'IT'],
-				equipements: ['NAS Synology', 'Entrepôt principal', 'Bureau administratif'],
-				risques: ['Concentration des activités', 'Point de défaillance unique']
-			},
-			{
-				nom: 'Site Auvergne-Rhône-Alpes',
-				code: 'ARA',
-				adresse: 'Non spécifié',
-				statut: 'Site de distribution',
-				surface: 'Non spécifié',
-				collaborateurs: 'Non spécifié',
-				activites: ['Logistique régionale', 'Distribution', 'Service client'],
-				equipements: ['NAS Synology', 'Entrepôt régional', 'Quai de chargement'],
-				risques: ['Dépendance au site IDF', 'Capacité limitée']
-			},
-			{
-				nom: "Site Provence-Alpes-Côte d'Azur",
-				code: 'PACA',
-				adresse: 'Non spécifié',
-				statut: 'Site de distribution',
-				surface: 'Non spécifié',
-				collaborateurs: 'Non spécifié',
-				activites: ['Distribution régionale', 'Logistique locale'],
-				equipements: ['Entrepôt', 'Équipements de manutention'],
-				risques: ['Pas de responsable dédié', 'Infrastructure limitée', 'Isolation géographique']
-			}
-		]
-	};
-
-	const fonctionnelData = {
-		fonctions: [
-			{
-				nom: 'Gestion des Stocks',
-				description: 'Fiches Excel par entrepôt pour suivi inventaire',
-				flux: ['Réception → Stockage Excel', 'Stockage → Suivi manuel'],
-				donnees: ['Stock disponible', 'Mouvements manuels', 'Inventaires Excel'],
-				statut: 'critique'
-			},
-			{
-				nom: 'Suivi des Expéditions',
-				description: 'Feuilles papier et scans pour traçabilité',
-				flux: ['Préparation → Feuille papier', 'Expédition → Scan manuel'],
-				donnees: ['Bons de livraison', 'Scans documents', 'Traçabilité papier'],
-				statut: 'critique'
-			},
-			{
-				nom: 'Gestion Commerciale',
-				description: 'CRM Hubspot version gratuite',
-				flux: ['Prospects → Hubspot', 'Suivi client → CRM'],
-				donnees: ['Contacts clients', 'Opportunités', 'Historique'],
-				statut: 'partiel'
-			},
-			{
-				nom: 'Comptabilité',
-				description: 'Externalisée chez cabinet comptable',
-				flux: ['Documents → Cabinet', 'Traitement → Retour'],
-				donnees: ['Factures', 'Écritures comptables', 'Bilans'],
-				statut: 'externe'
-			},
-			{
-				nom: 'Business Intelligence',
-				description: 'Aucun outil de BI disponible',
-				flux: ['Pas de flux automatisé'],
-				donnees: ['Aucune consolidation', 'Reporting manuel'],
-				statut: 'absent'
-			},
-			{
-				nom: 'Gestion Documentaire',
-				description: 'Aucun système de GED',
-				flux: ['Documents → Stockage local', 'Recherche manuelle'],
-				donnees: ['Fichiers dispersés', 'Pas de versioning'],
-				statut: 'absent'
-			}
-		]
-	};
-
-	const applicatifData = {
-		applications: [
-			{
-				nom: 'Excel Stocks',
-				type: 'Tableur',
-				domaine: 'Gestion des stocks',
-				criticite: 'Critique',
-				statut: 'En service',
-				users: 'Multi-utilisateurs',
-				sites: ['IDF', 'ARA', 'PACA'],
-				conformite: 'Non conforme',
-				risques: [
-					'Perte de données récente',
-					'Versions multiples',
-					'Pas de traçabilité',
-					'Erreurs de saisie'
-				]
-			},
-			{
-				nom: 'Suivi Expéditions Papier',
-				type: 'Processus manuel',
-				domaine: 'Logistique',
-				criticite: 'Critique',
-				statut: 'En service',
-				users: 'Tous sites',
-				sites: ['IDF', 'ARA', 'PACA'],
-				conformite: 'Non conforme',
-				risques: [
-					'Rupture de traçabilité',
-					'Perte documents',
-					'Erreurs humaines',
-					'Conformité réglementaire'
-				]
-			},
-			{
-				nom: 'HubSpot CRM',
-				type: 'CRM SaaS',
-				domaine: 'Commercial',
-				criticite: 'Moyenne',
-				statut: 'En service',
-				users: 'Équipe commerciale',
-				sites: ['IDF'],
-				conformite: 'Partielle',
-				risques: ['Version gratuite limitée', 'Fonctionnalités restreintes']
-			},
-			{
-				nom: 'Comptabilité Externe',
-				type: 'Service externalisé',
-				domaine: 'Finance',
-				criticite: 'Moyenne',
-				statut: 'En service',
-				users: 'Cabinet comptable',
-				sites: ['Externe'],
-				conformite: 'Conforme',
-				risques: ['Dépendance externe', 'Délais de traitement']
-			}
-		],
-		donnees: [
-			{ nom: 'Stocks par entrepôt', source: 'Excel', qualite: 'Très faible', volume: 'Élevé' },
-			{
-				nom: 'Suivi expéditions',
-				source: 'Papier + Scans',
-				qualite: 'Très faible',
-				volume: 'Élevé'
-			},
-			{ nom: 'Contacts Clients', source: 'HubSpot', qualite: 'Moyenne', volume: 'Moyen' },
-			{ nom: 'Données Comptables', source: 'Cabinet Externe', qualite: 'Bonne', volume: 'Moyen' }
-		]
-	};
-
-	const techniqueData = {
-		infrastructure: [
-			{
-				nom: 'NAS Synology IDF',
-				type: 'Stockage local',
-				localisation: 'Île-de-France',
-				statut: 'Opérationnel',
-				capacite: 'Non spécifiée',
-				utilisation: 'Inconnue',
-				redondance: 'Aucune',
-				risques: ['Pas de sauvegarde distante', 'Point de défaillance unique', 'Pas de cloud']
-			},
-			{
-				nom: 'NAS Synology ARA',
-				type: 'Stockage local',
-				localisation: 'Auvergne-Rhône-Alpes',
-				statut: 'Opérationnel',
-				capacite: 'Non spécifiée',
-				utilisation: 'Inconnue',
-				redondance: 'Aucune',
-				risques: ['Pas de sauvegarde distante', 'Point de défaillance unique', 'Isolation site']
-			},
-			{
-				nom: 'NAS Synology PACA',
-				type: 'Stockage local',
-				localisation: 'PACA',
-				statut: 'Opérationnel',
-				capacite: 'Non spécifiée',
-				utilisation: 'Inconnue',
-				redondance: 'Aucune',
-				risques: ['Pas de sauvegarde distante', 'Point de défaillance unique', 'Isolation site']
-			},
-			{
-				nom: 'VPN Inter-sites',
-				type: 'Réseau',
-				localisation: 'Multi-sites',
-				statut: 'Instable',
-				bande_passante: 'Non spécifiée',
-				disponibilite: 'Problématique',
-				redondance: 'Aucune',
-				risques: ['Indisponibilité récente', 'Pas de lien de secours', 'Impact sur activité']
-			},
-			{
-				nom: 'Postes de Travail',
-				type: 'Équipements utilisateur',
-				localisation: 'Tous sites',
-				statut: 'En service',
-				nombre: 'Non spécifié',
-				os: 'Non spécifié',
-				redondance: 'Aucune',
-				risques: ['Tentative rançongiciel récente', 'Sécurité insuffisante']
-			}
-		],
-		incidents: [
-			{ nom: 'Perte de données', impact: 'Critique', date: 'Récent', statut: 'Résolu' },
-			{ nom: 'Rupture de traçabilité', impact: 'Critique', date: 'Récent', statut: 'Non résolu' },
-			{ nom: 'Tentative de rançongiciel', impact: 'Critique', date: 'Récent', statut: 'Contenu' },
-			{ nom: 'Indisponibilité VPN', impact: 'Majeur', date: 'Récent', statut: 'Récurrent' }
-		],
-		securite: {
-			niveau: 'Critique',
-			mesures: ['Antivirus basique', 'VPN instable'],
-			manques: [
-				'Protection rançongiciel',
-				'Sauvegarde distante',
-				'Monitoring sécurité',
-				'Formation utilisateurs',
-				'Politique sécurité'
-			],
-			incidents: 4
-		}
-	};
-
+	// Fonctions utilisant les actions du store
 	function toggleExpand(key: string) {
-		expandedItems[key] = !expandedItems[key];
+		dataActions.toggleExpanded(key);
+	}
+
+	function selectLayer(layerId: string) {
+		dataActions.setSelectedLayer(layerId);
+	}
+
+	function selectBlock(blockId: string | null) {
+		dataActions.setSelectedBlock(blockId);
 	}
 
 	function getStatusColor(statut: string) {
@@ -416,14 +148,6 @@
 			default:
 				return 'from-gray-400 to-gray-600';
 		}
-	}
-
-	function selectLayer(layerId: string) {
-		selectedLayer = layerId;
-	}
-
-	function selectBlock(blockId: string | null) {
-		selectedBlock = selectedBlock === blockId ? null : blockId;
 	}
 </script>
 
@@ -560,7 +284,7 @@
 					</div>
 					<div class="relative p-8">
 						<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-							{#each metierData.ecosysteme as entite, idx}
+							{#each $metierStore.ecosysteme as entite, idx}
 								<div
 									class="group/eco relative overflow-hidden rounded-2xl border border-blue-100/50 bg-gradient-to-r from-white/90 via-blue-50/30 to-white/90 p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:bg-gradient-to-r hover:from-blue-50/80 hover:to-indigo-50/50 hover:shadow-xl"
 								>
@@ -612,7 +336,7 @@
 					</div>
 					<div class="relative p-8">
 						<div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
-							{#each metierData.etablissements as etablissement, idx}
+							{#each $metierStore.etablissements as etablissement, idx}
 								<div
 									class="group/etab relative overflow-hidden rounded-2xl border border-blue-100/50 bg-gradient-to-r from-white/90 via-blue-50/30 to-white/90 p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:bg-gradient-to-r hover:from-blue-50/80 hover:to-indigo-50/50 hover:shadow-xl"
 								>
@@ -724,7 +448,7 @@
 							</div>
 						</div>
 						<div class="relative p-8">
-							{#each metierData.processus as processus}
+							{#each $metierStore.processus as processus}
 								<div class="mb-8 last:mb-0">
 									<div
 										class="group/item flex cursor-pointer items-center rounded-2xl p-4 transition-all duration-300 hover:scale-[1.02] hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:shadow-xl"
@@ -809,7 +533,7 @@
 						</div>
 						<div class="relative p-8">
 							<div class="space-y-4">
-								{#each metierData.acteurs as acteur}
+								{#each $metierStore.acteurs as acteur}
 									<div
 										class="group/actor relative overflow-hidden rounded-2xl border border-blue-100/50 bg-gradient-to-r from-white/90 via-blue-50/30 to-white/90 p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:bg-gradient-to-r hover:from-blue-50/80 hover:to-indigo-50/50 hover:shadow-xl"
 									>
@@ -862,7 +586,7 @@
 					</div>
 					<div class="p-6">
 						<div class="grid gap-6">
-							{#each fonctionnelData.fonctions as fonction}
+							{#each $fonctionnelStore.fonctions as fonction}
 								<div
 									class="rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6 transition-all duration-200 hover:border-green-300 hover:shadow-lg"
 								>
@@ -926,7 +650,7 @@
 						</div>
 						<div class="p-6">
 							<div class="space-y-6">
-								{#each applicatifData.applications as app, idx}
+								{#each $applicatifStore.applications as app, idx}
 									<div
 										class="cursor-pointer rounded-2xl border border-gray-200 p-6 transition-all duration-300 hover:scale-[1.02] {selectedBlock ===
 										`app-${idx}`
@@ -1002,7 +726,7 @@
 						</div>
 						<div class="p-6">
 							<div class="space-y-4">
-								{#each applicatifData.donnees as donnee}
+								{#each $applicatifStore.donnees as donnee}
 									<div
 										class="rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-4 transition-shadow hover:shadow-md"
 									>
@@ -1042,7 +766,7 @@
 					</div>
 					<div class="p-6">
 						<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-							{#each techniqueData.incidents as incident, idx}
+							{#each $techniqueStore.incidents as incident, idx}
 								<div
 									class="rounded-xl border p-4 transition-all duration-200 hover:shadow-lg {incident.impact ===
 									'Critique'
@@ -1090,7 +814,7 @@
 						</div>
 						<div class="p-6">
 							<div class="space-y-6">
-								{#each techniqueData.infrastructure as infra}
+								{#each $techniqueStore.infrastructure as infra}
 									<div
 										class="rounded-2xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6 transition-all duration-200 hover:shadow-lg"
 									>
@@ -1182,7 +906,7 @@
 												'critique'
 											)}"
 										>
-											{techniqueData.securite.niveau}
+											{$techniqueStore.securite.niveau}
 										</span>
 									</div>
 								</div>
@@ -1192,7 +916,7 @@
 								>
 									<div class="mb-3 text-sm font-bold text-green-800">Mesures en place:</div>
 									<ul class="space-y-2">
-										{#each techniqueData.securite.mesures as mesure}
+										{#each $techniqueStore.securite.mesures as mesure}
 											<li class="flex items-center text-sm text-gray-700">
 												<div class="mr-2 h-2 w-2 rounded-full bg-green-400"></div>
 												{mesure}
@@ -1209,7 +933,7 @@
 										Manques critiques:
 									</div>
 									<ul class="space-y-2">
-										{#each techniqueData.securite.manques as manque}
+										{#each $techniqueStore.securite.manques as manque}
 											<li class="flex items-start text-sm text-red-600">
 												<AlertTriangle size={12} class="mt-1 mr-2 flex-shrink-0" />
 												<span>{manque}</span>
@@ -1226,7 +950,7 @@
 										<span
 											class="rounded-full bg-red-100 px-4 py-2 text-sm font-bold text-red-800 shadow-sm"
 										>
-											{techniqueData.securite.incidents}
+											{$techniqueStore.securite.incidents_total}
 										</span>
 									</div>
 								</div>
@@ -1256,7 +980,8 @@
 							></div>
 						</div>
 						<span class="text-base font-black text-gray-900"
-							>Risques Critiques: <span class="text-red-600">12</span></span
+							>Risques Critiques: <span class="text-red-600">{$statistiques.risquesCritiques}</span
+							></span
 						>
 					</div>
 					<div class="group flex items-center gap-4">
@@ -1269,7 +994,9 @@
 							></div>
 						</div>
 						<span class="text-base font-black text-gray-900"
-							>Incidents Récents: <span class="text-orange-600">4</span></span
+							>Incidents Récents: <span class="text-orange-600"
+								>{$statistiques.incidentsCritiques}</span
+							></span
 						>
 					</div>
 					<div class="group flex items-center gap-4">
@@ -1282,7 +1009,7 @@
 							></div>
 						</div>
 						<span class="text-base font-black text-gray-900"
-							>Applications: <span class="text-blue-600">4</span></span
+							>Applications: <span class="text-blue-600">{$statistiques.applications}</span></span
 						>
 					</div>
 				</div>
