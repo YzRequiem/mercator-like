@@ -47,48 +47,103 @@
 				id: 'logistique',
 				nom: 'Logistique Médicale',
 				sousProcessus: [
-					{ nom: 'Réception', acteurs: ['Magasiniers'], sites: ['IDF', 'ARA', 'PACA'] },
-					{ nom: 'Stockage', acteurs: ['Responsables Entrepôt'], sites: ['IDF', 'ARA', 'PACA'] },
-					{ nom: 'Conditionnement', acteurs: ['Équipes Qualité'], sites: ['IDF', 'ARA', 'PACA'] },
-					{ nom: 'Expédition', acteurs: ['Logisticiens'], sites: ['IDF', 'ARA', 'PACA'] },
-					{ nom: 'Traçabilité', acteurs: ['Responsable Qualité'], sites: ['IDF', 'ARA', 'PACA'] }
+					{
+						nom: 'Réception',
+						acteurs: ['Responsable Logistique National'],
+						sites: ['IDF', 'ARA', 'PACA']
+					},
+					{
+						nom: 'Stockage',
+						acteurs: ['Responsable Site IDF', 'Responsable Site ARA'],
+						sites: ['IDF', 'ARA', 'PACA']
+					},
+					{
+						nom: 'Conditionnement',
+						acteurs: ['Responsable Qualité'],
+						sites: ['IDF', 'ARA', 'PACA']
+					},
+					{
+						nom: 'Livraison',
+						acteurs: ['Responsable Logistique National'],
+						sites: ['IDF', 'ARA', 'PACA']
+					}
 				]
 			},
 			{
 				id: 'commercial',
 				nom: 'Gestion Commerciale',
 				sousProcessus: [
-					{ nom: 'Prospection', acteurs: ['Équipe Commerciale'], sites: ['IDF'] },
-					{ nom: 'Devis', acteurs: ['Responsable Commercial'], sites: ['IDF'] },
-					{ nom: 'Suivi Client', acteurs: ['Service Client'], sites: ['IDF', 'ARA', 'PACA'] }
+					{ nom: 'Gestion CRM', acteurs: ['Responsable Commercial'], sites: ['IDF'] },
+					{
+						nom: 'Relation Client',
+						acteurs: ['Responsable Commercial'],
+						sites: ['IDF', 'ARA', 'PACA']
+					}
 				]
 			},
 			{
-				id: 'qualite',
-				nom: 'Qualité & Conformité',
+				id: 'administration',
+				nom: 'Administration & Finance',
 				sousProcessus: [
-					{
-						nom: 'Contrôle Qualité',
-						acteurs: ['Responsable Qualité'],
-						sites: ['IDF', 'ARA', 'PACA']
-					},
-					{
-						nom: 'Conformité ANSM',
-						acteurs: ['Responsable Qualité'],
-						sites: ['IDF', 'ARA', 'PACA']
-					},
-					{ nom: 'Audit Interne', acteurs: ['Direction Qualité'], sites: ['IDF'] }
+					{ nom: 'Comptabilité', acteurs: ['Cabinet Externe'], sites: ['Externe'] },
+					{ nom: 'Gestion Administrative', acteurs: ['Directeur Général'], sites: ['IDF'] }
 				]
 			}
 		],
 		acteurs: [
-			{ nom: 'Directeur Général', site: 'IDF', role: 'Stratégie globale' },
-			{ nom: 'Responsable Logistique National', site: 'IDF', role: 'Coordination logistique' },
-			{ nom: 'Responsable Site IDF', site: 'IDF', role: 'Opérations IDF' },
-			{ nom: 'Responsable Site ARA', site: 'ARA', role: 'Opérations ARA' },
-			{ nom: 'Responsable Site PACA', site: 'PACA', role: 'Opérations PACA' },
-			{ nom: 'Responsable Qualité', site: 'IDF', role: 'Conformité ANSM' },
-			{ nom: 'Responsable Commercial', site: 'IDF', role: 'Relation client' }
+			{ nom: 'Directeur Général', site: 'IDF', role: 'Direction générale' },
+			{
+				nom: 'Responsable Logistique National',
+				site: 'IDF',
+				role: 'Coordination logistique nationale'
+			},
+			{ nom: 'Responsable Site Île-de-France', site: 'IDF', role: 'Opérations IDF' },
+			{ nom: 'Responsable Site Rhône-Alpes', site: 'ARA', role: 'Opérations ARA' },
+			{ nom: 'Responsable Qualité', site: 'IDF', role: 'Contrôle qualité et conformité' },
+			{ nom: 'Responsable Commercial', site: 'IDF', role: 'Gestion commerciale' },
+			{ nom: 'Équipe Informatique', site: 'IDF', role: 'Support IT et infrastructure' }
+		],
+		ecosysteme: [
+			{ nom: 'Hôpitaux', type: 'Client', relation: 'Fourniture dispositifs médicaux' },
+			{ nom: 'Cliniques', type: 'Client', relation: 'Fourniture dispositifs médicaux' },
+			{ nom: 'Pharmacies', type: 'Client', relation: 'Fourniture dispositifs médicaux' },
+			{ nom: 'Fournisseurs', type: 'Fournisseur', relation: 'Approvisionnement' },
+			{ nom: 'Cabinet de Comptabilité', type: 'Prestataire', relation: 'Services comptables' }
+		],
+		etablissements: [
+			{
+				nom: 'Site Île-de-France',
+				code: 'IDF',
+				adresse: 'Non spécifié',
+				statut: 'Siège social',
+				surface: 'Non spécifié',
+				collaborateurs: 'Non spécifié',
+				activites: ['Direction générale', 'Logistique', 'Commercial', 'Qualité', 'IT'],
+				equipements: ['NAS Synology', 'Entrepôt principal', 'Bureau administratif'],
+				risques: ['Concentration des activités', 'Point de défaillance unique']
+			},
+			{
+				nom: 'Site Auvergne-Rhône-Alpes',
+				code: 'ARA',
+				adresse: 'Non spécifié',
+				statut: 'Site de distribution',
+				surface: 'Non spécifié',
+				collaborateurs: 'Non spécifié',
+				activites: ['Logistique régionale', 'Distribution', 'Service client'],
+				equipements: ['NAS Synology', 'Entrepôt régional', 'Quai de chargement'],
+				risques: ['Dépendance au site IDF', 'Capacité limitée']
+			},
+			{
+				nom: "Site Provence-Alpes-Côte d'Azur",
+				code: 'PACA',
+				adresse: 'Non spécifié',
+				statut: 'Site de distribution',
+				surface: 'Non spécifié',
+				collaborateurs: 'Non spécifié',
+				activites: ['Distribution régionale', 'Logistique locale'],
+				equipements: ['Entrepôt', 'Équipements de manutention'],
+				risques: ['Pas de responsable dédié', 'Infrastructure limitée', 'Isolation géographique']
+			}
 		]
 	};
 
@@ -96,30 +151,44 @@
 		fonctions: [
 			{
 				nom: 'Gestion des Stocks',
-				description: 'Suivi inventaire et approvisionnement',
-				flux: ['Réception → Stockage', 'Stockage → Expédition'],
-				donnees: ['Stock disponible', 'Mouvements', 'Inventaires'],
+				description: 'Fiches Excel par entrepôt pour suivi inventaire',
+				flux: ['Réception → Stockage Excel', 'Stockage → Suivi manuel'],
+				donnees: ['Stock disponible', 'Mouvements manuels', 'Inventaires Excel'],
 				statut: 'critique'
 			},
 			{
-				nom: 'Traçabilité',
-				description: 'Suivi des dispositifs médicaux',
-				flux: ['Réception → Traçabilité', 'Traçabilité → Livraison'],
-				donnees: ['N° lot', 'Température', 'Géolocalisation'],
+				nom: 'Suivi des Expéditions',
+				description: 'Feuilles papier et scans pour traçabilité',
+				flux: ['Préparation → Feuille papier', 'Expédition → Scan manuel'],
+				donnees: ['Bons de livraison', 'Scans documents', 'Traçabilité papier'],
 				statut: 'critique'
 			},
 			{
 				nom: 'Gestion Commerciale',
-				description: 'CRM et suivi clients',
-				flux: ['Prospect → Devis', 'Commande → Facturation'],
-				donnees: ['Contacts', 'Commandes', 'Facturation'],
+				description: 'CRM Hubspot version gratuite',
+				flux: ['Prospects → Hubspot', 'Suivi client → CRM'],
+				donnees: ['Contacts clients', 'Opportunités', 'Historique'],
 				statut: 'partiel'
 			},
 			{
-				nom: 'Reporting',
-				description: 'Tableaux de bord et KPI',
-				flux: ['Données → Consolidation', 'Consolidation → Reporting'],
-				donnees: ['KPI', 'Alertes', 'Analyses'],
+				nom: 'Comptabilité',
+				description: 'Externalisée chez cabinet comptable',
+				flux: ['Documents → Cabinet', 'Traitement → Retour'],
+				donnees: ['Factures', 'Écritures comptables', 'Bilans'],
+				statut: 'externe'
+			},
+			{
+				nom: 'Business Intelligence',
+				description: 'Aucun outil de BI disponible',
+				flux: ['Pas de flux automatisé'],
+				donnees: ['Aucune consolidation', 'Reporting manuel'],
+				statut: 'absent'
+			},
+			{
+				nom: 'Gestion Documentaire',
+				description: 'Aucun système de GED',
+				flux: ['Documents → Stockage local', 'Recherche manuelle'],
+				donnees: ['Fichiers dispersés', 'Pas de versioning'],
 				statut: 'absent'
 			}
 		]
@@ -130,53 +199,68 @@
 			{
 				nom: 'Excel Stocks',
 				type: 'Tableur',
-				domaine: 'Logistique',
-				criticite: 'Haute',
+				domaine: 'Gestion des stocks',
+				criticite: 'Critique',
 				statut: 'En service',
-				users: '15 utilisateurs',
+				users: 'Multi-utilisateurs',
 				sites: ['IDF', 'ARA', 'PACA'],
 				conformite: 'Non conforme',
-				risques: ['Erreurs de saisie', 'Pas de traçabilité', 'Versions multiples']
+				risques: [
+					'Perte de données récente',
+					'Versions multiples',
+					'Pas de traçabilité',
+					'Erreurs de saisie'
+				]
+			},
+			{
+				nom: 'Suivi Expéditions Papier',
+				type: 'Processus manuel',
+				domaine: 'Logistique',
+				criticite: 'Critique',
+				statut: 'En service',
+				users: 'Tous sites',
+				sites: ['IDF', 'ARA', 'PACA'],
+				conformite: 'Non conforme',
+				risques: [
+					'Rupture de traçabilité',
+					'Perte documents',
+					'Erreurs humaines',
+					'Conformité réglementaire'
+				]
 			},
 			{
 				nom: 'HubSpot CRM',
-				type: 'CRM',
+				type: 'CRM SaaS',
 				domaine: 'Commercial',
 				criticite: 'Moyenne',
 				statut: 'En service',
-				users: '8 utilisateurs',
+				users: 'Équipe commerciale',
 				sites: ['IDF'],
 				conformite: 'Partielle',
-				risques: ['Version gratuite limitée']
-			},
-			{
-				nom: 'Processus Papier',
-				type: 'Manuel',
-				domaine: 'Traçabilité',
-				criticite: 'Critique',
-				statut: 'En service',
-				users: '25 utilisateurs',
-				sites: ['IDF', 'ARA', 'PACA'],
-				conformite: 'Non conforme',
-				risques: ['Perte documents', 'Erreurs humaines', 'Non-conformité ANSM']
+				risques: ['Version gratuite limitée', 'Fonctionnalités restreintes']
 			},
 			{
 				nom: 'Comptabilité Externe',
-				type: 'SaaS',
+				type: 'Service externalisé',
 				domaine: 'Finance',
 				criticite: 'Moyenne',
 				statut: 'En service',
-				users: '3 utilisateurs',
+				users: 'Cabinet comptable',
 				sites: ['Externe'],
 				conformite: 'Conforme',
-				risques: ['Dépendance externe']
+				risques: ['Dépendance externe', 'Délais de traitement']
 			}
 		],
 		donnees: [
-			{ nom: 'Référentiel Produits', source: 'Excel', qualite: 'Faible', volume: 'Moyen' },
-			{ nom: 'Stocks', source: 'Excel', qualite: 'Faible', volume: 'Élevé' },
+			{ nom: 'Stocks par entrepôt', source: 'Excel', qualite: 'Très faible', volume: 'Élevé' },
+			{
+				nom: 'Suivi expéditions',
+				source: 'Papier + Scans',
+				qualite: 'Très faible',
+				volume: 'Élevé'
+			},
 			{ nom: 'Contacts Clients', source: 'HubSpot', qualite: 'Moyenne', volume: 'Moyen' },
-			{ nom: 'Traçabilité', source: 'Papier', qualite: 'Très faible', volume: 'Élevé' }
+			{ nom: 'Données Comptables', source: 'Cabinet Externe', qualite: 'Bonne', volume: 'Moyen' }
 		]
 	};
 
@@ -184,49 +268,71 @@
 		infrastructure: [
 			{
 				nom: 'NAS Synology IDF',
-				type: 'Stockage',
-				localisation: 'IDF',
+				type: 'Stockage local',
+				localisation: 'Île-de-France',
 				statut: 'Opérationnel',
-				capacite: '4 To',
-				utilisation: '75%',
-				redondance: 'Non',
-				risques: ['Panne unique', 'Pas de sauvegarde distante']
+				capacite: 'Non spécifiée',
+				utilisation: 'Inconnue',
+				redondance: 'Aucune',
+				risques: ['Pas de sauvegarde distante', 'Point de défaillance unique', 'Pas de cloud']
 			},
 			{
 				nom: 'NAS Synology ARA',
-				type: 'Stockage',
-				localisation: 'ARA',
+				type: 'Stockage local',
+				localisation: 'Auvergne-Rhône-Alpes',
 				statut: 'Opérationnel',
-				capacite: '2 To',
-				utilisation: '60%',
-				redondance: 'Non',
-				risques: ['Panne unique', 'Capacité limitée']
+				capacite: 'Non spécifiée',
+				utilisation: 'Inconnue',
+				redondance: 'Aucune',
+				risques: ['Pas de sauvegarde distante', 'Point de défaillance unique', 'Isolation site']
 			},
 			{
 				nom: 'NAS Synology PACA',
-				type: 'Stockage',
+				type: 'Stockage local',
 				localisation: 'PACA',
-				statut: 'Défaillant',
-				capacite: '4 To',
-				utilisation: 'N/A',
-				redondance: 'Non',
-				risques: ['Perte données avril 2025', 'Pas de sauvegarde']
+				statut: 'Opérationnel',
+				capacite: 'Non spécifiée',
+				utilisation: 'Inconnue',
+				redondance: 'Aucune',
+				risques: ['Pas de sauvegarde distante', 'Point de défaillance unique', 'Isolation site']
 			},
 			{
 				nom: 'VPN Inter-sites',
 				type: 'Réseau',
 				localisation: 'Multi-sites',
 				statut: 'Instable',
-				bande_passante: '100 Mbps',
-				disponibilite: '85%',
-				redondance: 'Non',
-				risques: ['Coupures fréquentes', 'Pas de lien de secours']
+				bande_passante: 'Non spécifiée',
+				disponibilite: 'Problématique',
+				redondance: 'Aucune',
+				risques: ['Indisponibilité récente', 'Pas de lien de secours', 'Impact sur activité']
+			},
+			{
+				nom: 'Postes de Travail',
+				type: 'Équipements utilisateur',
+				localisation: 'Tous sites',
+				statut: 'En service',
+				nombre: 'Non spécifié',
+				os: 'Non spécifié',
+				redondance: 'Aucune',
+				risques: ['Tentative rançongiciel récente', 'Sécurité insuffisante']
 			}
 		],
+		incidents: [
+			{ nom: 'Perte de données', impact: 'Critique', date: 'Récent', statut: 'Résolu' },
+			{ nom: 'Rupture de traçabilité', impact: 'Critique', date: 'Récent', statut: 'Non résolu' },
+			{ nom: 'Tentative de rançongiciel', impact: 'Critique', date: 'Récent', statut: 'Contenu' },
+			{ nom: 'Indisponibilité VPN', impact: 'Majeur', date: 'Récent', statut: 'Récurrent' }
+		],
 		securite: {
-			niveau: 'Insuffisant',
-			mesures: ['VPN basique', 'Antivirus postes'],
-			manques: ['RSSI', 'Politique sécurité', 'Formation', 'Supervision', 'Sauvegarde distante'],
+			niveau: 'Critique',
+			mesures: ['Antivirus basique', 'VPN instable'],
+			manques: [
+				'Protection rançongiciel',
+				'Sauvegarde distante',
+				'Monitoring sécurité',
+				'Formation utilisateurs',
+				'Politique sécurité'
+			],
 			incidents: 4
 		}
 	};
@@ -240,23 +346,30 @@
 			case 'critique':
 			case 'Défaillant':
 			case 'Non conforme':
+			case 'Non résolu':
 				return 'bg-red-100 text-red-800 border-red-200';
 			case 'partiel':
 			case 'Instable':
 			case 'Partielle':
+			case 'Récurrent':
 				return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+			case 'externe':
+			case 'Contenu':
+				return 'bg-blue-100 text-blue-800 border-blue-200';
 			case 'absent':
 				return 'bg-gray-100 text-gray-800 border-gray-200';
 			case 'Opérationnel':
 			case 'En service':
 			case 'Conforme':
+			case 'Résolu':
 				return 'bg-green-100 text-green-800 border-green-200';
 			case 'faible':
-				return 'bg-red-100 text-red-800 border-red-200';
 			case 'très faible':
 				return 'bg-red-100 text-red-800 border-red-200';
 			case 'moyenne':
 				return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+			case 'bonne':
+				return 'bg-green-100 text-green-800 border-green-200';
 			default:
 				return 'bg-blue-100 text-blue-800 border-blue-200';
 		}
@@ -428,6 +541,171 @@
 		{#if selectedLayer === 'metier'}
 			<!-- Couche Métier -->
 			<div class="space-y-10">
+				<!-- Écosystème MEDILOG -->
+				<div
+					class="group hover:shadow-3xl relative overflow-hidden rounded-3xl border border-blue-200/50 bg-white/80 shadow-2xl backdrop-blur-sm transition-all duration-500 hover:scale-[1.02]"
+				>
+					<div
+						class="absolute inset-0 bg-gradient-to-br from-blue-50/80 via-transparent to-indigo-50/30"
+					></div>
+					<div
+						class="relative border-b border-blue-200/30 bg-gradient-to-r from-blue-50/90 to-indigo-50/90 px-8 py-6"
+					>
+						<div class="flex items-center gap-3">
+							<div class="rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 p-3 shadow-lg">
+								<Building size={20} class="text-white" />
+							</div>
+							<h3 class="text-xl font-black text-blue-900">Écosystème MEDILOG</h3>
+						</div>
+					</div>
+					<div class="relative p-8">
+						<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+							{#each metierData.ecosysteme as entite, idx}
+								<div
+									class="group/eco relative overflow-hidden rounded-2xl border border-blue-100/50 bg-gradient-to-r from-white/90 via-blue-50/30 to-white/90 p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:bg-gradient-to-r hover:from-blue-50/80 hover:to-indigo-50/50 hover:shadow-xl"
+								>
+									<div
+										class="absolute inset-0 bg-gradient-to-r from-blue-100/10 to-indigo-100/10 opacity-0 transition-opacity duration-300 group-hover/eco:opacity-100"
+									></div>
+									<div class="relative">
+										<div class="mb-3 flex items-center gap-3">
+											<div
+												class="rounded-lg bg-gradient-to-br from-blue-100 to-indigo-100 p-2 transition-all duration-300 group-hover/eco:scale-110"
+											>
+												<Building size={16} class="text-blue-700" />
+											</div>
+											<span
+												class="rounded-full px-3 py-1 text-xs font-bold {entite.type === 'Client'
+													? 'bg-green-100 text-green-800'
+													: entite.type === 'Fournisseur'
+														? 'bg-orange-100 text-orange-800'
+														: 'bg-purple-100 text-purple-800'}"
+											>
+												{entite.type}
+											</span>
+										</div>
+										<div class="mb-2 text-base font-bold text-gray-900">{entite.nom}</div>
+										<div class="text-sm text-gray-600">{entite.relation}</div>
+									</div>
+								</div>
+							{/each}
+						</div>
+					</div>
+				</div>
+
+				<!-- Établissements MEDILOG -->
+				<div
+					class="group hover:shadow-3xl relative overflow-hidden rounded-3xl border border-blue-200/50 bg-white/80 shadow-2xl backdrop-blur-sm transition-all duration-500 hover:scale-[1.02]"
+				>
+					<div
+						class="absolute inset-0 bg-gradient-to-br from-blue-50/80 via-transparent to-indigo-50/30"
+					></div>
+					<div
+						class="relative border-b border-blue-200/30 bg-gradient-to-r from-blue-50/90 to-indigo-50/90 px-8 py-6"
+					>
+						<div class="flex items-center gap-3">
+							<div class="rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 p-3 shadow-lg">
+								<Building size={20} class="text-white" />
+							</div>
+							<h3 class="text-xl font-black text-blue-900">Établissements</h3>
+						</div>
+					</div>
+					<div class="relative p-8">
+						<div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+							{#each metierData.etablissements as etablissement, idx}
+								<div
+									class="group/etab relative overflow-hidden rounded-2xl border border-blue-100/50 bg-gradient-to-r from-white/90 via-blue-50/30 to-white/90 p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:bg-gradient-to-r hover:from-blue-50/80 hover:to-indigo-50/50 hover:shadow-xl"
+								>
+									<div
+										class="absolute inset-0 bg-gradient-to-r from-blue-100/10 to-indigo-100/10 opacity-0 transition-opacity duration-300 group-hover/etab:opacity-100"
+									></div>
+									<div class="relative">
+										<div class="mb-4 flex items-center justify-between">
+											<div class="flex items-center gap-3">
+												<div
+													class="rounded-lg bg-gradient-to-br from-blue-100 to-indigo-100 p-2 transition-all duration-300 group-hover/etab:scale-110"
+												>
+													<Building size={18} class="text-blue-700" />
+												</div>
+												<span
+													class="rounded-full px-3 py-1 text-xs font-bold {etablissement.statut ===
+													'Siège social'
+														? 'bg-purple-100 text-purple-800'
+														: 'bg-blue-100 text-blue-800'}"
+												>
+													{etablissement.code}
+												</span>
+											</div>
+											<span
+												class="rounded-full px-3 py-1 text-xs font-bold {etablissement.statut ===
+												'Siège social'
+													? 'bg-purple-100 text-purple-800'
+													: 'bg-green-100 text-green-800'}"
+											>
+												{etablissement.statut}
+											</span>
+										</div>
+
+										<div class="mb-3 text-lg font-bold text-gray-900">{etablissement.nom}</div>
+										<div class="mb-4 text-sm text-gray-600">{etablissement.adresse}</div>
+
+										<div class="mb-4 grid grid-cols-2 gap-3 text-sm">
+											<div class="rounded-lg bg-gray-50 p-3">
+												<span class="font-semibold text-gray-700">Surface:</span>
+												<div class="text-gray-600">{etablissement.surface}</div>
+											</div>
+											<div class="rounded-lg bg-gray-50 p-3">
+												<span class="font-semibold text-gray-700">Collaborateurs:</span>
+												<div class="text-gray-600">{etablissement.collaborateurs}</div>
+											</div>
+										</div>
+
+										<div class="mb-4">
+											<div class="mb-2 text-sm font-semibold text-gray-700">Activités:</div>
+											<div class="flex flex-wrap gap-1">
+												{#each etablissement.activites as activite}
+													<span class="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800">
+														{activite}
+													</span>
+												{/each}
+											</div>
+										</div>
+
+										<div class="mb-4">
+											<div class="mb-2 text-sm font-semibold text-gray-700">Équipements:</div>
+											<ul class="space-y-1">
+												{#each etablissement.equipements as equipement}
+													<li class="flex items-center text-sm text-gray-600">
+														<div class="mr-2 h-2 w-2 rounded-full bg-green-400"></div>
+														{equipement}
+													</li>
+												{/each}
+											</ul>
+										</div>
+
+										{#if etablissement.risques && etablissement.risques.length > 0}
+											<div class="rounded-xl border border-red-200 bg-red-50 p-3">
+												<div class="mb-2 flex items-center text-sm font-bold text-red-700">
+													<AlertTriangle size={14} class="mr-2" />
+													Risques:
+												</div>
+												<ul class="space-y-1">
+													{#each etablissement.risques as risque}
+														<li class="flex items-start text-xs text-red-600">
+															<AlertTriangle size={10} class="mt-1 mr-2 flex-shrink-0" />
+															<span>{risque}</span>
+														</li>
+													{/each}
+												</ul>
+											</div>
+										{/if}
+									</div>
+								</div>
+							{/each}
+						</div>
+					</div>
+				</div>
+
 				<div class="grid grid-cols-1 gap-10 lg:grid-cols-2">
 					<div
 						class="group hover:shadow-3xl relative overflow-hidden rounded-3xl border border-blue-200/50 bg-white/80 shadow-2xl backdrop-blur-sm transition-all duration-500 hover:scale-[1.02]"
@@ -754,6 +1032,55 @@
 		{:else if selectedLayer === 'technique'}
 			<!-- Couche Technique -->
 			<div class="space-y-8">
+				<!-- Section Incidents Récents -->
+				<div class="overflow-hidden rounded-2xl border border-red-200/50 bg-white shadow-xl">
+					<div class="border-b border-red-200 bg-gradient-to-r from-red-50 to-red-100 px-6 py-4">
+						<div class="flex items-center gap-3">
+							<AlertTriangle size={20} class="text-red-600" />
+							<h3 class="text-lg font-bold text-red-900">Incidents Récents</h3>
+						</div>
+					</div>
+					<div class="p-6">
+						<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+							{#each techniqueData.incidents as incident, idx}
+								<div
+									class="rounded-xl border p-4 transition-all duration-200 hover:shadow-lg {incident.impact ===
+									'Critique'
+										? 'border-red-300 bg-red-50'
+										: incident.impact === 'Majeur'
+											? 'border-orange-300 bg-orange-50'
+											: 'border-yellow-300 bg-yellow-50'}"
+								>
+									<div class="mb-2 text-sm font-bold text-gray-900">{incident.nom}</div>
+									<div class="mb-2 flex items-center justify-between">
+										<span class="text-xs font-medium text-gray-600">Impact:</span>
+										<span
+											class="rounded-full px-2 py-1 text-xs font-bold {incident.impact ===
+											'Critique'
+												? 'bg-red-100 text-red-800'
+												: incident.impact === 'Majeur'
+													? 'bg-orange-100 text-orange-800'
+													: 'bg-yellow-100 text-yellow-800'}"
+										>
+											{incident.impact}
+										</span>
+									</div>
+									<div class="flex items-center justify-between">
+										<span class="text-xs font-medium text-gray-600">Statut:</span>
+										<span
+											class="rounded-full px-2 py-1 text-xs font-bold {getStatusColor(
+												incident.statut
+											)}"
+										>
+											{incident.statut}
+										</span>
+									</div>
+								</div>
+							{/each}
+						</div>
+					</div>
+				</div>
+
 				<div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
 					<div
 						class="overflow-hidden rounded-2xl border border-gray-200/50 bg-white shadow-xl lg:col-span-2"
@@ -929,7 +1256,7 @@
 							></div>
 						</div>
 						<span class="text-base font-black text-gray-900"
-							>Risques Critiques: <span class="text-red-600">8</span></span
+							>Risques Critiques: <span class="text-red-600">12</span></span
 						>
 					</div>
 					<div class="group flex items-center gap-4">
@@ -942,7 +1269,7 @@
 							></div>
 						</div>
 						<span class="text-base font-black text-gray-900"
-							>Attention: <span class="text-orange-600">5</span></span
+							>Incidents Récents: <span class="text-orange-600">4</span></span
 						>
 					</div>
 					<div class="group flex items-center gap-4">
@@ -955,7 +1282,7 @@
 							></div>
 						</div>
 						<span class="text-base font-black text-gray-900"
-							>Conformes: <span class="text-green-600">2</span></span
+							>Applications: <span class="text-blue-600">4</span></span
 						>
 					</div>
 				</div>
