@@ -109,6 +109,41 @@
 			{ nom: 'Pharmacies', type: 'Client', relation: 'Fourniture dispositifs médicaux' },
 			{ nom: 'Fournisseurs', type: 'Fournisseur', relation: 'Approvisionnement' },
 			{ nom: 'Cabinet de Comptabilité', type: 'Prestataire', relation: 'Services comptables' }
+		],
+		etablissements: [
+			{
+				nom: 'Site Île-de-France',
+				code: 'IDF',
+				adresse: 'Non spécifié',
+				statut: 'Siège social',
+				surface: 'Non spécifié',
+				collaborateurs: 'Non spécifié',
+				activites: ['Direction générale', 'Logistique', 'Commercial', 'Qualité', 'IT'],
+				equipements: ['NAS Synology', 'Entrepôt principal', 'Bureau administratif'],
+				risques: ['Concentration des activités', 'Point de défaillance unique']
+			},
+			{
+				nom: 'Site Auvergne-Rhône-Alpes',
+				code: 'ARA',
+				adresse: 'Non spécifié',
+				statut: 'Site de distribution',
+				surface: 'Non spécifié',
+				collaborateurs: 'Non spécifié',
+				activites: ['Logistique régionale', 'Distribution', 'Service client'],
+				equipements: ['NAS Synology', 'Entrepôt régional', 'Quai de chargement'],
+				risques: ['Dépendance au site IDF', 'Capacité limitée']
+			},
+			{
+				nom: "Site Provence-Alpes-Côte d'Azur",
+				code: 'PACA',
+				adresse: 'Non spécifié',
+				statut: 'Site de distribution',
+				surface: 'Non spécifié',
+				collaborateurs: 'Non spécifié',
+				activites: ['Distribution régionale', 'Logistique locale'],
+				equipements: ['Entrepôt', 'Équipements de manutention'],
+				risques: ['Pas de responsable dédié', 'Infrastructure limitée', 'Isolation géographique']
+			}
 		]
 	};
 
@@ -551,6 +586,119 @@
 										</div>
 										<div class="mb-2 text-base font-bold text-gray-900">{entite.nom}</div>
 										<div class="text-sm text-gray-600">{entite.relation}</div>
+									</div>
+								</div>
+							{/each}
+						</div>
+					</div>
+				</div>
+
+				<!-- Établissements MEDILOG -->
+				<div
+					class="group hover:shadow-3xl relative overflow-hidden rounded-3xl border border-blue-200/50 bg-white/80 shadow-2xl backdrop-blur-sm transition-all duration-500 hover:scale-[1.02]"
+				>
+					<div
+						class="absolute inset-0 bg-gradient-to-br from-blue-50/80 via-transparent to-indigo-50/30"
+					></div>
+					<div
+						class="relative border-b border-blue-200/30 bg-gradient-to-r from-blue-50/90 to-indigo-50/90 px-8 py-6"
+					>
+						<div class="flex items-center gap-3">
+							<div class="rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 p-3 shadow-lg">
+								<Building size={20} class="text-white" />
+							</div>
+							<h3 class="text-xl font-black text-blue-900">Établissements</h3>
+						</div>
+					</div>
+					<div class="relative p-8">
+						<div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+							{#each metierData.etablissements as etablissement, idx}
+								<div
+									class="group/etab relative overflow-hidden rounded-2xl border border-blue-100/50 bg-gradient-to-r from-white/90 via-blue-50/30 to-white/90 p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:bg-gradient-to-r hover:from-blue-50/80 hover:to-indigo-50/50 hover:shadow-xl"
+								>
+									<div
+										class="absolute inset-0 bg-gradient-to-r from-blue-100/10 to-indigo-100/10 opacity-0 transition-opacity duration-300 group-hover/etab:opacity-100"
+									></div>
+									<div class="relative">
+										<div class="mb-4 flex items-center justify-between">
+											<div class="flex items-center gap-3">
+												<div
+													class="rounded-lg bg-gradient-to-br from-blue-100 to-indigo-100 p-2 transition-all duration-300 group-hover/etab:scale-110"
+												>
+													<Building size={18} class="text-blue-700" />
+												</div>
+												<span
+													class="rounded-full px-3 py-1 text-xs font-bold {etablissement.statut ===
+													'Siège social'
+														? 'bg-purple-100 text-purple-800'
+														: 'bg-blue-100 text-blue-800'}"
+												>
+													{etablissement.code}
+												</span>
+											</div>
+											<span
+												class="rounded-full px-3 py-1 text-xs font-bold {etablissement.statut ===
+												'Siège social'
+													? 'bg-purple-100 text-purple-800'
+													: 'bg-green-100 text-green-800'}"
+											>
+												{etablissement.statut}
+											</span>
+										</div>
+
+										<div class="mb-3 text-lg font-bold text-gray-900">{etablissement.nom}</div>
+										<div class="mb-4 text-sm text-gray-600">{etablissement.adresse}</div>
+
+										<div class="mb-4 grid grid-cols-2 gap-3 text-sm">
+											<div class="rounded-lg bg-gray-50 p-3">
+												<span class="font-semibold text-gray-700">Surface:</span>
+												<div class="text-gray-600">{etablissement.surface}</div>
+											</div>
+											<div class="rounded-lg bg-gray-50 p-3">
+												<span class="font-semibold text-gray-700">Collaborateurs:</span>
+												<div class="text-gray-600">{etablissement.collaborateurs}</div>
+											</div>
+										</div>
+
+										<div class="mb-4">
+											<div class="mb-2 text-sm font-semibold text-gray-700">Activités:</div>
+											<div class="flex flex-wrap gap-1">
+												{#each etablissement.activites as activite}
+													<span class="rounded-full bg-blue-100 px-2 py-1 text-xs text-blue-800">
+														{activite}
+													</span>
+												{/each}
+											</div>
+										</div>
+
+										<div class="mb-4">
+											<div class="mb-2 text-sm font-semibold text-gray-700">Équipements:</div>
+											<ul class="space-y-1">
+												{#each etablissement.equipements as equipement}
+													<li class="flex items-center text-sm text-gray-600">
+														<div class="mr-2 h-2 w-2 rounded-full bg-green-400"></div>
+														{equipement}
+													</li>
+												{/each}
+											</ul>
+										</div>
+
+										{#if etablissement.risques && etablissement.risques.length > 0}
+											<div class="rounded-xl border border-red-200 bg-red-50 p-3">
+												<div class="mb-2 flex items-center text-sm font-bold text-red-700">
+													<AlertTriangle size={14} class="mr-2" />
+													Risques:
+												</div>
+												<ul class="space-y-1">
+													{#each etablissement.risques as risque}
+														<li class="flex items-start text-xs text-red-600">
+															<AlertTriangle size={10} class="mt-1 mr-2 flex-shrink-0" />
+															<span>{risque}</span>
+														</li>
+													{/each}
+												</ul>
+											</div>
+										{/if}
 									</div>
 								</div>
 							{/each}
