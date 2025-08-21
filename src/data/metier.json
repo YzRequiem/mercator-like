@@ -1,0 +1,228 @@
+{
+	"processus": [
+		{
+			"id": "logistique",
+			"nom": "Logistique Médicale",
+			"sousProcessus": [
+				{
+					"id": "reception",
+					"nom": "Réception",
+					"acteurs": ["Responsable Logistique National"],
+					"sites": ["IDF", "ARA", "PACA"],
+					"description": "Réception et contrôle des dispositifs médicaux"
+				},
+				{
+					"id": "stockage",
+					"nom": "Stockage",
+					"acteurs": ["Responsable Site IDF", "Responsable Site ARA"],
+					"sites": ["IDF", "ARA", "PACA"],
+					"description": "Stockage sécurisé des dispositifs médicaux"
+				},
+				{
+					"id": "conditionnement",
+					"nom": "Conditionnement",
+					"acteurs": ["Responsable Qualité"],
+					"sites": ["IDF", "ARA", "PACA"],
+					"description": "Conditionnement selon les normes qualité"
+				},
+				{
+					"id": "livraison",
+					"nom": "Livraison",
+					"acteurs": ["Responsable Logistique National"],
+					"sites": ["IDF", "ARA", "PACA"],
+					"description": "Livraison aux clients finaux"
+				}
+			]
+		},
+		{
+			"id": "commercial",
+			"nom": "Gestion Commerciale",
+			"sousProcessus": [
+				{
+					"id": "gestion-crm",
+					"nom": "Gestion CRM",
+					"acteurs": ["Responsable Commercial"],
+					"sites": ["IDF"],
+					"description": "Gestion de la relation client via HubSpot"
+				},
+				{
+					"id": "relation-client",
+					"nom": "Relation Client",
+					"acteurs": ["Responsable Commercial"],
+					"sites": ["IDF", "ARA", "PACA"],
+					"description": "Suivi et support client"
+				}
+			]
+		},
+		{
+			"id": "administration",
+			"nom": "Administration & Finance",
+			"sousProcessus": [
+				{
+					"id": "comptabilite",
+					"nom": "Comptabilité",
+					"acteurs": ["Cabinet Externe"],
+					"sites": ["Externe"],
+					"description": "Gestion comptable externalisée"
+				},
+				{
+					"id": "gestion-administrative",
+					"nom": "Gestion Administrative",
+					"acteurs": ["Directeur Général"],
+					"sites": ["IDF"],
+					"description": "Administration générale de l'entreprise"
+				}
+			]
+		}
+	],
+	"acteurs": [
+		{
+			"id": "directeur-general",
+			"nom": "Directeur Général",
+			"site": "IDF",
+			"role": "Direction générale",
+			"email": "direction@medilog.fr",
+			"statut": "actif"
+		},
+		{
+			"id": "responsable-logistique-national",
+			"nom": "Responsable Logistique National",
+			"site": "IDF",
+			"role": "Coordination logistique nationale",
+			"email": "logistique@medilog.fr",
+			"statut": "actif"
+		},
+		{
+			"id": "responsable-site-idf",
+			"nom": "Responsable Site Île-de-France",
+			"site": "IDF",
+			"role": "Opérations IDF",
+			"email": "idf@medilog.fr",
+			"statut": "actif"
+		},
+		{
+			"id": "responsable-site-ara",
+			"nom": "Responsable Site Rhône-Alpes",
+			"site": "ARA",
+			"role": "Opérations ARA",
+			"email": "ara@medilog.fr",
+			"statut": "actif"
+		},
+		{
+			"id": "responsable-qualite",
+			"nom": "Responsable Qualité",
+			"site": "IDF",
+			"role": "Contrôle qualité et conformité",
+			"email": "qualite@medilog.fr",
+			"statut": "actif"
+		},
+		{
+			"id": "responsable-commercial",
+			"nom": "Responsable Commercial",
+			"site": "IDF",
+			"role": "Gestion commerciale",
+			"email": "commercial@medilog.fr",
+			"statut": "actif"
+		},
+		{
+			"id": "equipe-informatique",
+			"nom": "Équipe Informatique",
+			"site": "IDF",
+			"role": "Support IT et infrastructure",
+			"email": "it@medilog.fr",
+			"statut": "actif"
+		}
+	],
+	"ecosysteme": [
+		{
+			"id": "hopitaux",
+			"nom": "Hôpitaux",
+			"type": "Client",
+			"relation": "Fourniture dispositifs médicaux",
+			"importance": "critique",
+			"volume": "élevé"
+		},
+		{
+			"id": "cliniques",
+			"nom": "Cliniques",
+			"type": "Client",
+			"relation": "Fourniture dispositifs médicaux",
+			"importance": "haute",
+			"volume": "moyen"
+		},
+		{
+			"id": "pharmacies",
+			"nom": "Pharmacies",
+			"type": "Client",
+			"relation": "Fourniture dispositifs médicaux",
+			"importance": "moyenne",
+			"volume": "moyen"
+		},
+		{
+			"id": "fournisseurs",
+			"nom": "Fournisseurs",
+			"type": "Fournisseur",
+			"relation": "Approvisionnement",
+			"importance": "critique",
+			"volume": "élevé"
+		},
+		{
+			"id": "cabinet-comptabilite",
+			"nom": "Cabinet de Comptabilité",
+			"type": "Prestataire",
+			"relation": "Services comptables",
+			"importance": "moyenne",
+			"volume": "faible"
+		}
+	],
+	"etablissements": [
+		{
+			"id": "idf",
+			"nom": "Site Île-de-France",
+			"code": "IDF",
+			"adresse": "Zone industrielle de Roissy",
+			"ville": "Roissy-en-France",
+			"codePostal": "95700",
+			"statut": "Siège social",
+			"surface": "2500 m²",
+			"collaborateurs": 120,
+			"dateOuverture": "2010-03-15",
+			"activites": ["Direction générale", "Logistique", "Commercial", "Qualité", "IT"],
+			"equipements": ["NAS Synology", "Entrepôt principal", "Bureau administratif"],
+			"risques": ["Concentration des activités", "Point de défaillance unique"],
+			"statut_operationnel": "actif"
+		},
+		{
+			"id": "ara",
+			"nom": "Site Auvergne-Rhône-Alpes",
+			"code": "ARA",
+			"adresse": "Zone logistique de Lyon Sud",
+			"ville": "Lyon",
+			"codePostal": "69200",
+			"statut": "Site de distribution",
+			"surface": "1800 m²",
+			"collaborateurs": 65,
+			"dateOuverture": "2015-09-20",
+			"activites": ["Logistique régionale", "Distribution", "Service client"],
+			"equipements": ["NAS Synology", "Entrepôt régional", "Quai de chargement"],
+			"risques": ["Dépendance au site IDF", "Capacité limitée"],
+			"statut_operationnel": "actif"
+		},
+		{
+			"id": "paca",
+			"nom": "Site Provence-Alpes-Côte d'Azur",
+			"code": "PACA",
+			"adresse": "Zone d'activités de Marseille",
+			"ville": "Marseille",
+			"codePostal": "13000",
+			"statut": "Site de distribution",
+			"surface": "1200 m²",
+			"collaborateurs": 35,
+			"dateOuverture": "2018-06-10",
+			"activites": ["Distribution régionale", "Logistique locale"],
+			"equipements": ["Entrepôt", "Équipements de manutention"],
+			"risques": ["Pas de responsable dédié", "Infrastructure limitée", "Isolation géographique"],
+			"statut_operationnel": "actif"
+		}
+	]
+}

@@ -1,0 +1,76 @@
+{
+	"fonctions": [
+		{
+			"id": "gestion-stocks",
+			"nom": "Gestion des Stocks",
+			"description": "Fiches Excel par entrepôt pour suivi inventaire",
+			"flux": ["Réception → Stockage Excel", "Stockage → Suivi manuel"],
+			"donnees": ["Stock disponible", "Mouvements manuels", "Inventaires Excel"],
+			"statut": "critique",
+			"niveau_automatisation": "manuel",
+			"frequence_utilisation": "quotidienne",
+			"utilisateurs": ["Responsable Logistique", "Équipes entrepôt"],
+			"sites": ["IDF", "ARA", "PACA"]
+		},
+		{
+			"id": "suivi-expeditions",
+			"nom": "Suivi des Expéditions",
+			"description": "Feuilles papier et scans pour traçabilité",
+			"flux": ["Préparation → Feuille papier", "Expédition → Scan manuel"],
+			"donnees": ["Bons de livraison", "Scans documents", "Traçabilité papier"],
+			"statut": "critique",
+			"niveau_automatisation": "manuel",
+			"frequence_utilisation": "quotidienne",
+			"utilisateurs": ["Équipes logistique", "Responsables sites"],
+			"sites": ["IDF", "ARA", "PACA"]
+		},
+		{
+			"id": "gestion-commerciale",
+			"nom": "Gestion Commerciale",
+			"description": "CRM Hubspot version gratuite",
+			"flux": ["Prospects → Hubspot", "Suivi client → CRM"],
+			"donnees": ["Contacts clients", "Opportunités", "Historique"],
+			"statut": "partiel",
+			"niveau_automatisation": "semi-automatique",
+			"frequence_utilisation": "quotidienne",
+			"utilisateurs": ["Responsable Commercial", "Équipe commerciale"],
+			"sites": ["IDF"]
+		},
+		{
+			"id": "comptabilite",
+			"nom": "Comptabilité",
+			"description": "Externalisée chez cabinet comptable",
+			"flux": ["Documents → Cabinet", "Traitement → Retour"],
+			"donnees": ["Factures", "Écritures comptables", "Bilans"],
+			"statut": "externe",
+			"niveau_automatisation": "externe",
+			"frequence_utilisation": "mensuelle",
+			"utilisateurs": ["Cabinet comptable", "Directeur Général"],
+			"sites": ["Externe"]
+		},
+		{
+			"id": "business-intelligence",
+			"nom": "Business Intelligence",
+			"description": "Aucun outil de BI disponible",
+			"flux": ["Pas de flux automatisé"],
+			"donnees": ["Aucune consolidation", "Reporting manuel"],
+			"statut": "absent",
+			"niveau_automatisation": "inexistant",
+			"frequence_utilisation": "ponctuelle",
+			"utilisateurs": [],
+			"sites": []
+		},
+		{
+			"id": "gestion-documentaire",
+			"nom": "Gestion Documentaire",
+			"description": "Aucun système de GED",
+			"flux": ["Documents → Stockage local", "Recherche manuelle"],
+			"donnees": ["Fichiers dispersés", "Pas de versioning"],
+			"statut": "absent",
+			"niveau_automatisation": "inexistant",
+			"frequence_utilisation": "quotidienne",
+			"utilisateurs": ["Tous les collaborateurs"],
+			"sites": ["IDF", "ARA", "PACA"]
+		}
+	]
+}
