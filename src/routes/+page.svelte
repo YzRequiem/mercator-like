@@ -34,11 +34,6 @@
 	}
 
 	// Utilisation des stores réactifs
-	const metierData = $derived($metierStore);
-	const fonctionnelData = $derived($fonctionnelStore);
-	const applicatifData = $derived($applicatifStore);
-	const techniqueData = $derived($techniqueStore);
-	const stats = $derived($statistiques);
 	const state = $derived($appState);
 
 	// Charger les données depuis l'API au démarrage
@@ -47,9 +42,10 @@
 	});
 
 	// Variables locales dérivées des stores
-	let selectedLayer = $derived(state.selectedLayer);
-	let expandedItems = $derived(state.expandedItems);
-	let selectedBlock = $derived(state.selectedBlock);
+	// Utilisation de const (préférence ESLint prefer-const)
+	const selectedLayer = $derived(state.selectedLayer);
+	const expandedItems = $derived(state.expandedItems);
+	const selectedBlock = $derived(state.selectedBlock);
 
 	const layers = [
 		{
