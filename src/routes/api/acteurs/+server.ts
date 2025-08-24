@@ -25,12 +25,15 @@ export async function POST({ request }) {
 		const data = await request.json();
 		const db = getDb();
 
+		// Générer un ID unique si non fourni
+		const id = data.id || crypto.randomUUID();
+
 		await db.execute({
 			sql: `INSERT INTO acteurs (id, nom, site, role) VALUES (?, ?, ?, ?)`,
-			args: [data.id, data.nom, data.site || null, data.role || null]
+			args: [id, data.nom, data.site || null, data.role || null]
 		});
 
-		return json({ success: true, data: { id: data.id, ...data } });
+		return json({ success: true, data: { id, ...data } });
 	} catch (error) {
 		console.error("Erreur lors de la création de l'acteur:", error);
 		return json(

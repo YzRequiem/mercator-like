@@ -33,13 +33,16 @@ export async function POST({ request }) {
 		const data = await request.json();
 		const db = getDb();
 
+		// Générer un ID unique si non fourni
+		const id = data.id || crypto.randomUUID();
+
 		const result = await db.execute({
 			sql: `INSERT INTO etablissements 
                   (id, nom, code, adresse, statut, surface, collaborateurs, 
                    activites, equipements, risques, statut_operationnel) 
                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 			args: [
-				data.id,
+				id,
 				data.nom,
 				data.code,
 				data.adresse || null,
@@ -53,7 +56,7 @@ export async function POST({ request }) {
 			]
 		});
 
-		return json({ success: true, data: { id: data.id, ...data } });
+		return json({ success: true, data: { id, ...data } });
 	} catch (error) {
 		console.error("Erreur lors de la création de l'établissement:", error);
 		return json(

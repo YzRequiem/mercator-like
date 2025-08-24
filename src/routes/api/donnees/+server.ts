@@ -25,13 +25,16 @@ export async function POST({ request }) {
 		const data = await request.json();
 		const db = getDb();
 
+		// Générer un ID unique si non fourni
+		const id = data.id || crypto.randomUUID();
+
 		await db.execute({
 			sql: `INSERT INTO donnees 
                   (id, nom, source, qualite, volume, frequence_maj, proprietaire, 
                    sensibilite, retention, format, taille_estimee) 
                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 			args: [
-				data.id,
+				id,
 				data.nom,
 				data.source || null,
 				data.qualite || null,
@@ -45,7 +48,7 @@ export async function POST({ request }) {
 			]
 		});
 
-		return json({ success: true, data: { id: data.id, ...data } });
+		return json({ success: true, data: { id, ...data } });
 	} catch (error) {
 		console.error('Erreur lors de la création de la donnée:', error);
 		return json(

@@ -11,8 +11,7 @@
 		<Toast
 			type={toast.type}
 			message={toast.message}
-			duration={0}
-			visible={true}
+			duration={toast.duration || 3000}
 			on:close={() => toastActions.remove(toast.id)}
 		/>
 	{/each}

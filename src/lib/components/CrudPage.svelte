@@ -10,7 +10,13 @@
 	export let entityType: string;
 	export let entityLabel: string;
 	export let entityIcon: string = '📋';
-	export let fields: Array<{ key: string; label: string; type: string; required?: boolean }>;
+	export let fields: Array<{
+		key: string;
+		label: string;
+		type: string;
+		required?: boolean;
+		options?: Array<{ value: string; label: string }>;
+	}>;
 	export let displayFields: string[];
 
 	// États locaux
@@ -211,7 +217,14 @@
 			role="button"
 			tabindex="0"
 		>
-			<div class="modal-content" role="dialog" aria-labelledby="modal-title" tabindex="-1">
+			<div
+				class="modal-content"
+				role="dialog"
+				aria-labelledby="modal-title"
+				tabindex="-1"
+				onclick={(e) => e.stopPropagation()}
+				onkeydown={(e) => e.stopPropagation()}
+			>
 				<div class="modal-header">
 					<h3 id="modal-title">
 						{editingItem ? 'Modifier' : 'Créer'} un {entityLabel.slice(0, -1).toLowerCase()}
@@ -268,6 +281,18 @@
 										bind:value={formData[field.key]}
 										required={field.required}
 									/>
+								{:else if field.type === 'select'}
+									<select
+										id={field.key}
+										name={field.key}
+										bind:value={formData[field.key]}
+										required={field.required}
+									>
+										<option value="">Sélectionner...</option>
+										{#each field.options || [] as option}
+											<option value={option.value}>{option.label}</option>
+										{/each}
+									</select>
 								{:else}
 									<input
 										id={field.key}

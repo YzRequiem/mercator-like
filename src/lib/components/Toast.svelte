@@ -1,34 +1,41 @@
 <!-- Composant de notification toast -->
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	import { fly } from 'svelte/transition';
+	import { createEventDispatcher, onMount } from 'svelte';
+	import { fly, fade } from 'svelte/transition';
 
 	export let type: 'success' | 'error' | 'warning' | 'info' = 'info';
 	export let message: string = '';
-	export let duration: number = 5000;
-	export let visible: boolean = false;
+	export let duration: number = 3000; // valeur par défaut (cohérente avec le store)
+	let remaining = duration;
+	let interval: any;
+	let startTime: number;
+	let progress = 100; // pour une éventuelle barre de progression
+	let hovering = false;
 
 	const dispatch = createEventDispatcher();
 
-	let timer: NodeJS.Timeout | null = null;
+	function close() {
+		clearInterval(interval);
+		dispatch('close');
+	}
 
-	$: if (visible && duration > 0) {
-		// Nettoie le timer précédent si il existe
-		if (timer) {
-			clearTimeout(timer);
+	function tick() {
+		const elapsed = performance.now() - startTime;
+		remaining = duration - elapsed;
+		progress = Math.max(0, (remaining / duration) * 100);
+		if (remaining <= 0) {
+			close();
 		}
-
-		timer = setTimeout(() => {
-			visible = false;
-			dispatch('close');
-		}, duration);
 	}
 
-	// Nettoyage du timer quand visible devient false
-	$: if (!visible && timer) {
-		clearTimeout(timer);
-		timer = null;
-	}
+	onMount(() => {
+		startTime = performance.now();
+		// Rafraîchissement fluide (60fps) mais léger – on pourrait réduire si nécessaire
+		interval = setInterval(() => {
+			if (!hovering) tick();
+		}, 100);
+		return () => clearInterval(interval);
+	});
 
 	function getTypeStyles(type: string) {
 		switch (type) {
@@ -57,20 +64,44 @@
 	}
 </script>
 
-{#if visible && message}
-	<div class="fixed top-4 right-4 z-50 max-w-md" transition:fly={{ x: 300, duration: 300 }}>
-		<div class="flex items-center gap-3 rounded-lg border p-4 shadow-lg {getTypeStyles(type)}">
-			<span class="text-lg">{getIcon(type)}</span>
-			<p class="flex-1 text-sm font-medium">{message}</p>
+{#if message}
+	<div
+		class="toast-item"
+		in:fly={{ x: 300, duration: 250 }}
+		out:fade={{ duration: 200 }}
+		role="alert"
+		on:mouseenter={() => (hovering = true)}
+		on:mouseleave={() => (hovering = false)}
+	>
+		<div
+			class="flex items-start gap-3 overflow-hidden rounded-lg border p-4 shadow-lg {getTypeStyles(
+				type
+			)}"
+		>
+			<span class="mt-0.5 text-lg leading-none">{getIcon(type)}</span>
+			<div class="flex-1">
+				<p class="text-sm leading-snug font-medium">{message}</p>
+				<div class="mt-2 h-1 w-full overflow-hidden rounded bg-black/10">
+					<div
+						class="linear h-full bg-current transition-[width] duration-100"
+						style={`width:${progress}%`}
+					></div>
+				</div>
+			</div>
 			<button
-				on:click={() => {
-					visible = false;
-					dispatch('close');
-				}}
-				class="text-lg opacity-70 transition-opacity hover:opacity-100"
+				on:click={close}
+				class="-mr-2 ml-2 rounded px-2 text-lg font-bold opacity-60 transition hover:bg-black/5 hover:opacity-100"
+				aria-label="Fermer la notification"
 			>
 				×
 			</button>
 		</div>
 	</div>
 {/if}
+
+<style>
+	.toast-item {
+		max-width: 24rem;
+		width: 100%;
+	}
+</style>

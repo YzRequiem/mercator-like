@@ -14,17 +14,22 @@ export const toastActions = {
 	// Ajouter une notification
 	add: (toast: Omit<ToastMessage, 'id'>) => {
 		const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+		// IMPORTANT: spread d'abord puis appliquer la durée par défaut, sinon une valeur undefined écrase la valeur par défaut
 		const newToast: ToastMessage = {
 			id,
-			duration: 5000,
-			...toast
+			...toast,
+			duration: toast.duration ?? 3000 // 3 secondes par défaut si non fourni
 		};
+
+		console.log('Adding toast:', newToast); // Debug
 
 		toastStore.update((toasts) => [...toasts, newToast]);
 
 		// Auto-remove après la durée spécifiée
 		if (newToast.duration && newToast.duration > 0) {
+			console.log(`Setting timeout for ${newToast.duration}ms`); // Debug
 			setTimeout(() => {
+				console.log('Auto-removing toast:', id); // Debug
 				toastActions.remove(id);
 			}, newToast.duration);
 		}
@@ -34,6 +39,7 @@ export const toastActions = {
 
 	// Supprimer une notification
 	remove: (id: string) => {
+		console.log('Removing toast:', id); // Debug
 		toastStore.update((toasts) => toasts.filter((toast) => toast.id !== id));
 	},
 
@@ -62,5 +68,5 @@ export function addToast(
 	type: 'success' | 'error' | 'warning' | 'info' = 'info',
 	duration?: number
 ) {
-	return toastActions.add({ type, message, duration });
+	return toastActions.add({ type, message, ...(duration && { duration }) });
 }
