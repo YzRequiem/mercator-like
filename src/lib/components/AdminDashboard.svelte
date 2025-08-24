@@ -4,7 +4,7 @@
 	import { apiClient } from '$lib/apiClient';
 	import LoadingSpinner from './LoadingSpinner.svelte';
 
-	let stats = {
+	const stats = {
 		etablissements: 0,
 		processus: 0,
 		acteurs: 0,
