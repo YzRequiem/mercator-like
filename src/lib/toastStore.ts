@@ -55,3 +55,12 @@ export const toastActions = {
 		toastStore.set([]);
 	}
 };
+
+// Fonction d'aide pour ajouter facilement une toast
+export function addToast(
+	message: string,
+	type: 'success' | 'error' | 'warning' | 'info' = 'info',
+	duration?: number
+) {
+	return toastActions.add({ type, message, duration });
+}

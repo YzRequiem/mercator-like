@@ -148,14 +148,16 @@ export interface Securite {
 // Classe client pour les API
 export class ApiClient {
 	private baseUrl: string;
+	private fetchFn: typeof fetch;
 
-	constructor(baseUrl: string = '/api') {
+	constructor(baseUrl: string = '/api', fetchFn: typeof fetch = fetch) {
 		this.baseUrl = baseUrl;
+		this.fetchFn = fetchFn;
 	}
 
 	private async request<T>(endpoint: string, options?: RequestInit): Promise<ApiResponse<T>> {
 		try {
-			const response = await fetch(`${this.baseUrl}${endpoint}`, {
+			const response = await this.fetchFn(`${this.baseUrl}${endpoint}`, {
 				headers: {
 					'Content-Type': 'application/json',
 					...options?.headers
@@ -442,3 +444,8 @@ export class ApiClient {
 
 // Instance par défaut du client API
 export const apiClient = new ApiClient();
+
+// Fonction utilitaire pour créer un client API avec event.fetch
+export function createApiClient(fetchFn: typeof fetch): ApiClient {
+	return new ApiClient('/api', fetchFn);
+}

@@ -209,11 +209,11 @@
 							Diagnostic API
 						</a>
 						<a
-							href="/test"
+							href="/admin"
 							class="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-600 transition-colors hover:bg-green-50/50 hover:text-green-600"
 						>
 							<Database size={16} />
-							Test API
+							Back admin
 						</a>
 					</div>
 
