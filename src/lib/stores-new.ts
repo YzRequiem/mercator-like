@@ -7,7 +7,6 @@ import {
 	type TechniqueData
 } from './apiDataService.js';
 import { apiClient } from './apiClient.js';
-import { toastActions } from './toastStore.js';
 
 // Stores pour chaque couche de données - initialisés vides et chargés de manière asynchrone
 export const metierStore = writable<MetierData>({
@@ -108,18 +107,8 @@ export const dataActions = {
 			techniqueStore.set(technique);
 
 			appState.update((state) => ({ ...state, lastUpdate: new Date() }));
-
-			// Calculer le total des données chargées
-			const totalData =
-				metier.etablissements.length +
-				metier.acteurs.length +
-				applicatif.applications.length +
-				technique.infrastructure.length;
-
-			toastActions.success(`Données chargées avec succès (${totalData} éléments)`);
 		} catch (error) {
 			console.error('Erreur lors du chargement des données:', error);
-			toastActions.error("Erreur lors du chargement des données depuis l'API");
 		} finally {
 			appState.update((state) => ({ ...state, isLoading: false }));
 		}
