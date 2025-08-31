@@ -34,13 +34,21 @@ export async function POST({ request }) {
 		const data = await request.json();
 		const db = getDb();
 
+		// Générer un ID basé sur le nom si pas fourni
+		const id =
+			data.id ||
+			data.nom
+				.toLowerCase()
+				.replace(/[^a-z0-9]+/g, '-')
+				.replace(/^-|-$/g, '');
+
 		await db.execute({
 			sql: `INSERT INTO fonctions 
                   (id, nom, description, flux, donnees, statut, niveau_automatisation, 
                    frequence_utilisation, utilisateurs, sites) 
                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 			args: [
-				data.id,
+				id,
 				data.nom,
 				data.description || null,
 				JSON.stringify(data.flux || []),
@@ -53,7 +61,7 @@ export async function POST({ request }) {
 			]
 		});
 
-		return json({ success: true, data: { id: data.id, ...data } });
+		return json({ success: true, data: { id, ...data } });
 	} catch (error) {
 		console.error('Erreur lors de la création de la fonction:', error);
 		return json(

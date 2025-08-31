@@ -4,13 +4,24 @@
 
 	export let data: PageData;
 
+	// Préparer les options pour les sites
+	const sitesOptions =
+		data.etablissements?.map((etablissement) => ({
+			value: etablissement.nom,
+			label: etablissement.nom
+		})) || [];
+
 	const fields = [
 		{ key: 'nom', label: 'Nom', type: 'text', required: true },
-		{ key: 'site', label: 'Site', type: 'text' },
+		{ key: 'site', label: 'Site', type: 'select', options: sitesOptions },
 		{ key: 'role', label: 'Rôle', type: 'text' }
 	];
 
 	const displayFields = ['nom', 'site', 'role'];
+
+	const referenceData = {
+		etablissements: data.etablissements
+	};
 </script>
 
 <CrudPage
@@ -20,4 +31,5 @@
 	entityIcon="👥"
 	{fields}
 	{displayFields}
+	{referenceData}
 />

@@ -4,9 +4,40 @@
 
 	export let data: PageData;
 
-	const fields = [{ key: 'nom', label: 'Nom', type: 'text', required: true }];
+	// Préparer les options pour les sélecteurs
+	const acteursOptions =
+		data.acteurs?.map((acteur) => ({
+			value: acteur.nom,
+			label: acteur.nom
+		})) || [];
 
-	const displayFields = ['nom'];
+	const etablissementsOptions =
+		data.etablissements?.map((etablissement) => ({
+			value: etablissement.nom,
+			label: etablissement.nom
+		})) || [];
+
+	const fields = [
+		{ key: 'nom', label: 'Nom', type: 'text', required: true },
+		{
+			key: 'sous_processus',
+			label: 'Sous-processus',
+			type: 'sub-objects',
+			subFields: [
+				{ key: 'nom', label: 'Nom', type: 'text' },
+				{ key: 'acteurs', label: 'Acteurs', type: 'select-tags', options: acteursOptions },
+				{ key: 'sites', label: 'Sites', type: 'select-tags', options: etablissementsOptions },
+				{ key: 'description', label: 'Description', type: 'textarea' }
+			]
+		}
+	];
+
+	const displayFields = ['nom', 'sous_processus'];
+
+	const referenceData = {
+		acteurs: data.acteurs,
+		etablissements: data.etablissements
+	};
 </script>
 
 <CrudPage
@@ -16,4 +47,5 @@
 	entityIcon="⚙️"
 	{fields}
 	{displayFields}
+	{referenceData}
 />

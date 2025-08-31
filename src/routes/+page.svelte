@@ -8,7 +8,10 @@
 		Users,
 		Building,
 		AlertTriangle,
-		Settings
+		Settings,
+		Target,
+		BarChart3,
+		Shield
 	} from 'lucide-svelte';
 
 	import {
@@ -118,6 +121,38 @@
 				return 'bg-green-100 text-green-800 border-green-200';
 			default:
 				return 'bg-blue-100 text-blue-800 border-blue-200';
+		}
+	}
+
+	function getVolumeColor(volume: string) {
+		switch (volume) {
+			case 'très faible':
+				return 'bg-gray-100 text-gray-800 border-gray-200';
+			case 'faible':
+				return 'bg-green-100 text-green-800 border-green-200';
+			case 'moyen':
+				return 'bg-blue-100 text-blue-800 border-blue-200';
+			case 'élevé':
+				return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+			case 'très élevé':
+				return 'bg-red-100 text-red-800 border-red-200';
+			default:
+				return 'bg-gray-100 text-gray-800 border-gray-200';
+		}
+	}
+
+	function getSensibiliteColor(sensibilite: string) {
+		switch (sensibilite) {
+			case 'public':
+				return 'bg-green-100 text-green-800 border-green-200';
+			case 'interne':
+				return 'bg-blue-100 text-blue-800 border-blue-200';
+			case 'confidentiel':
+				return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+			case 'secret':
+				return 'bg-red-100 text-red-800 border-red-200';
+			default:
+				return 'bg-gray-100 text-gray-800 border-gray-200';
 		}
 	}
 
@@ -714,50 +749,112 @@
 												<div>
 													<h4 class="font-bold text-gray-900">{app.nom}</h4>
 													<span class="text-xs font-medium text-gray-600"
-														>{app.type} - {app.domaine}</span
+														>{app.type}{app.domaine ? ` - ${app.domaine}` : ''}</span
 													>
 												</div>
 											</div>
 											<div class="flex items-center gap-3">
-												<div
-													class="h-3 w-3 rounded-full shadow-sm {getCriticiteColor(
-														app.criticite || 'Non définie'
-													)}"
-												></div>
-												<span
-													class="rounded-full border px-3 py-1 text-xs font-semibold shadow-sm {getStatusColor(
-														app.conformite || 'inconnu'
-													)}"
-												>
-													{app.conformite || 'Non défini'}
-												</span>
+												{#if app.criticite}
+													<div
+														class="h-3 w-3 rounded-full shadow-sm {getCriticiteColor(
+															app.criticite
+														)}"
+													></div>
+												{/if}
+												{#if app.conformite}
+													<span
+														class="rounded-full border px-3 py-1 text-xs font-semibold shadow-sm {getStatusColor(
+															app.conformite
+														)}"
+													>
+														{app.conformite}
+													</span>
+												{/if}
 											</div>
 										</div>
-										<div class="grid grid-cols-2 gap-4 text-sm">
-											<div class="rounded-lg bg-gray-50 p-3">
-												<span class="font-semibold text-gray-700">Utilisateurs:</span>
-												<div class="text-gray-600">{app.users}</div>
-											</div>
-											<div class="rounded-lg bg-gray-50 p-3">
-												<span class="font-semibold text-gray-700">Sites:</span>
-												<div class="text-gray-600">{(app.sites || []).join(', ')}</div>
-											</div>
-										</div>
-										{#if selectedBlock === `app-${idx}`}
-											<div class="mt-6 rounded-xl border border-red-200 bg-white p-4 shadow-sm">
-												<div class="mb-3 flex items-center text-sm font-bold text-red-700">
-													<AlertTriangle size={16} class="mr-2" />
-													Risques identifiés:
+
+										<!-- Informations principales -->
+										<div class="mb-4 grid grid-cols-2 gap-4 text-sm lg:grid-cols-4">
+											{#if app.users && Array.isArray(app.users) && app.users.length > 0}
+												<div class="rounded-lg bg-blue-50 p-3">
+													<span class="font-semibold text-blue-700">Utilisateurs:</span>
+													<div class="text-gray-600">{app.users.join(', ')}</div>
 												</div>
-												<ul class="space-y-2">
-													{#each app.risques || [] as risque}
-														<li class="flex items-start text-sm text-red-600">
-															<AlertTriangle size={12} class="mt-1 mr-2 flex-shrink-0" />
-															<span>{risque}</span>
-														</li>
-													{/each}
-												</ul>
-											</div>
+											{:else if app.users && typeof app.users === 'string'}
+												<div class="rounded-lg bg-blue-50 p-3">
+													<span class="font-semibold text-blue-700">Utilisateurs:</span>
+													<div class="text-gray-600">{app.users}</div>
+												</div>
+											{/if}
+											{#if app.sites && Array.isArray(app.sites) && app.sites.length > 0}
+												<div class="rounded-lg bg-green-50 p-3">
+													<span class="font-semibold text-green-700">Sites:</span>
+													<div class="text-gray-600">{app.sites.join(', ')}</div>
+												</div>
+											{/if}
+											{#if app.editeur}
+												<div class="rounded-lg bg-purple-50 p-3">
+													<span class="font-semibold text-purple-700">Éditeur:</span>
+													<div class="text-gray-600">{app.editeur}</div>
+												</div>
+											{/if}
+											{#if app.version}
+												<div class="rounded-lg bg-indigo-50 p-3">
+													<span class="font-semibold text-indigo-700">Version:</span>
+													<div class="text-gray-600">{app.version}</div>
+												</div>
+											{/if}
+											{#if app.technologies && Array.isArray(app.technologies) && app.technologies.length > 0}
+												<div class="rounded-lg bg-teal-50 p-3">
+													<span class="font-semibold text-teal-700">Technologies:</span>
+													<div class="text-gray-600">{app.technologies.join(', ')}</div>
+												</div>
+											{/if}
+											{#if app.hebergement}
+												<div class="rounded-lg bg-orange-50 p-3">
+													<span class="font-semibold text-orange-700">Hébergement:</span>
+													<div class="text-gray-600">{app.hebergement}</div>
+												</div>
+											{/if}
+											{#if app.licence}
+												<div class="rounded-lg bg-amber-50 p-3">
+													<span class="font-semibold text-amber-700">Licence:</span>
+													<div class="text-gray-600">{app.licence}</div>
+												</div>
+											{/if}
+											{#if app.fonctionnalites && Array.isArray(app.fonctionnalites) && app.fonctionnalites.length > 0}
+												<div class="rounded-lg bg-cyan-50 p-3">
+													<span class="font-semibold text-cyan-700">Fonctionnalités:</span>
+													<div class="text-gray-600">{app.fonctionnalites.join(', ')}</div>
+												</div>
+											{/if}
+										</div>
+
+										{#if selectedBlock === `app-${idx}`}
+											<!-- Informations détaillées en mode étendu -->
+											{#if app.description}
+												<div class="mb-4 rounded-xl bg-slate-50 p-4">
+													<h5 class="mb-2 font-semibold text-slate-800">Description</h5>
+													<p class="text-sm text-slate-700">{app.description}</p>
+												</div>
+											{/if}
+
+											{#if app.risques && Array.isArray(app.risques) && app.risques.length > 0}
+												<div class="mt-6 rounded-xl border border-red-200 bg-white p-4 shadow-sm">
+													<div class="mb-3 flex items-center text-sm font-bold text-red-700">
+														<AlertTriangle size={16} class="mr-2" />
+														Risques identifiés:
+													</div>
+													<ul class="space-y-2">
+														{#each app.risques as risque}
+															<li class="flex items-start text-sm text-red-600">
+																<AlertTriangle size={12} class="mt-1 mr-2 flex-shrink-0" />
+																<span>{risque}</span>
+															</li>
+														{/each}
+													</ul>
+												</div>
+											{/if}
 										{/if}
 									</div>
 								{/each}
@@ -772,26 +869,117 @@
 							<h3 class="text-lg font-bold text-yellow-900">Données</h3>
 						</div>
 						<div class="p-6">
-							<div class="space-y-4">
+							<div class="space-y-6">
 								{#each $applicatifStore.donnees as donnee}
 									<div
-										class="rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-4 transition-shadow hover:shadow-md"
+										class="rounded-xl border border-gray-200 bg-gradient-to-br from-white to-gray-50 p-6 transition-shadow hover:shadow-md"
 									>
-										<div class="mb-2 text-sm font-bold text-gray-900">{donnee.nom}</div>
+										<!-- En-tête avec nom et badges principaux -->
 										<div
-											class="mb-3 inline-block rounded-lg bg-gray-100 px-3 py-1 text-xs text-gray-600"
+											class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between"
 										>
-											Source: {donnee.source}
+											<h4 class="text-xl font-bold text-gray-900">{donnee.nom}</h4>
+											<div class="flex flex-wrap gap-2">
+												{#if donnee.qualite}
+													<span
+														class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold shadow-sm {getStatusColor(
+															(donnee.qualite || 'inconnue').toLowerCase()
+														)}"
+													>
+														<Target size={12} class="mr-1" />
+														{donnee.qualite}
+													</span>
+												{/if}
+												{#if donnee.volume}
+													<span
+														class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold {getVolumeColor(
+															(donnee.volume || 'moyen').toLowerCase()
+														)}"
+													>
+														<BarChart3 size={12} class="mr-1" />
+														{donnee.volume}
+													</span>
+												{/if}
+												{#if donnee.sensibilite}
+													<span
+														class="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold {getSensibiliteColor(
+															(donnee.sensibilite || 'interne').toLowerCase()
+														)}"
+													>
+														<Shield size={12} class="mr-1" />
+														{donnee.sensibilite}
+													</span>
+												{/if}
+											</div>
 										</div>
-										<div class="flex items-center justify-between">
-											<span class="text-xs font-medium text-gray-700">Qualité:</span>
-											<span
-												class="rounded-full px-3 py-1 text-xs font-semibold shadow-sm {getStatusColor(
-													(donnee.qualite || 'inconnue').toLowerCase()
-												)}"
-											>
-												{donnee.qualite || 'Non définie'}
-											</span>
+
+										<!-- Informations détaillées en grille -->
+										<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+											{#if donnee.source}
+												<div class="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
+													<div class="text-xs font-medium tracking-wide text-gray-500 uppercase">
+														Source
+													</div>
+													<div class="mt-1 text-sm font-semibold text-gray-900">
+														{donnee.source}
+													</div>
+												</div>
+											{/if}
+
+											{#if donnee.proprietaire}
+												<div class="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
+													<div class="text-xs font-medium tracking-wide text-gray-500 uppercase">
+														Propriétaire
+													</div>
+													<div class="mt-1 text-sm font-semibold text-gray-900">
+														{donnee.proprietaire}
+													</div>
+												</div>
+											{/if}
+
+											{#if donnee.format}
+												<div class="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
+													<div class="text-xs font-medium tracking-wide text-gray-500 uppercase">
+														Format
+													</div>
+													<div class="mt-1 text-sm font-semibold text-gray-900">
+														{donnee.format}
+													</div>
+												</div>
+											{/if}
+
+											{#if donnee.taille_estimee}
+												<div class="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
+													<div class="text-xs font-medium tracking-wide text-gray-500 uppercase">
+														Taille estimée
+													</div>
+													<div class="mt-1 text-sm font-semibold text-gray-900">
+														{donnee.taille_estimee}
+													</div>
+												</div>
+											{/if}
+
+											{#if donnee.frequence_maj}
+												<div class="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
+													<div class="text-xs font-medium tracking-wide text-gray-500 uppercase">
+														Fréquence de MAJ
+													</div>
+													<div class="mt-1 text-sm font-semibold text-gray-900">
+														{donnee.frequence_maj}
+													</div>
+												</div>
+											{/if}
+
+											{#if donnee.retention}
+												<div class="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
+													<div class="text-xs font-medium tracking-wide text-gray-500 uppercase">
+														Rétention
+													</div>
+													<div class="mt-1 text-sm font-semibold text-gray-900">
+														{donnee.retention}
+													</div>
+												</div>
+											{/if}
 										</div>
 									</div>
 								{/each}
@@ -812,7 +1000,7 @@
 						</div>
 					</div>
 					<div class="p-6">
-						<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+						<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 							{#each $techniqueStore.incidents as incident, idx}
 								<div
 									class="rounded-xl border p-4 transition-all duration-200 hover:shadow-lg {incident.impact ===
@@ -822,30 +1010,83 @@
 											? 'border-orange-300 bg-orange-50'
 											: 'border-yellow-300 bg-yellow-50'}"
 								>
-									<div class="mb-2 text-sm font-bold text-gray-900">{incident.nom}</div>
-									<div class="mb-2 flex items-center justify-between">
-										<span class="text-xs font-medium text-gray-600">Impact:</span>
-										<span
-											class="rounded-full px-2 py-1 text-xs font-bold {incident.impact ===
-											'Critique'
-												? 'bg-red-100 text-red-800'
-												: incident.impact === 'Majeur'
-													? 'bg-orange-100 text-orange-800'
-													: 'bg-yellow-100 text-yellow-800'}"
-										>
-											{incident.impact}
-										</span>
+									<div class="mb-3">
+										<h4 class="text-sm font-bold text-gray-900">{incident.nom}</h4>
+										{#if incident.date}
+											<div class="mt-1 text-xs text-gray-600">
+												{new Date(incident.date).toLocaleDateString('fr-FR')}
+											</div>
+										{/if}
 									</div>
-									<div class="flex items-center justify-between">
-										<span class="text-xs font-medium text-gray-600">Statut:</span>
-										<span
-											class="rounded-full px-2 py-1 text-xs font-bold {getStatusColor(
-												incident.statut || 'inconnu'
-											)}"
-										>
-											{incident.statut || 'Non défini'}
-										</span>
+
+									<div class="mb-3 space-y-2">
+										<div class="flex items-center justify-between">
+											<span class="text-xs font-medium text-gray-600">Impact:</span>
+											<span
+												class="rounded-full px-2 py-1 text-xs font-bold {incident.impact ===
+												'Critique'
+													? 'bg-red-100 text-red-800'
+													: incident.impact === 'Majeur'
+														? 'bg-orange-100 text-orange-800'
+														: 'bg-yellow-100 text-yellow-800'}"
+											>
+												{incident.impact}
+											</span>
+										</div>
+										<div class="flex items-center justify-between">
+											<span class="text-xs font-medium text-gray-600">Statut:</span>
+											<span
+												class="rounded-full px-2 py-1 text-xs font-bold {getStatusColor(
+													incident.statut || 'inconnu'
+												)}"
+											>
+												{incident.statut || 'Non défini'}
+											</span>
+										</div>
+										{#if incident.duree}
+											<div class="flex items-center justify-between">
+												<span class="text-xs font-medium text-gray-600">Durée:</span>
+												<span class="text-xs text-gray-700">{incident.duree}</span>
+											</div>
+										{/if}
+										{#if incident.cout_estime}
+											<div class="flex items-center justify-between">
+												<span class="text-xs font-medium text-gray-600">Coût estimé:</span>
+												<span class="text-xs text-gray-700"
+													>{incident.cout_estime.toLocaleString('fr-FR')} €</span
+												>
+											</div>
+										{/if}
 									</div>
+
+									{#if incident.description}
+										<div class="mb-3 line-clamp-2 text-xs text-gray-600">
+											{incident.description}
+										</div>
+									{/if}
+
+									{#if incident.cause}
+										<div class="mb-2 text-xs">
+											<span class="font-medium text-gray-600">Cause:</span>
+											<div class="mt-1 text-gray-700">{incident.cause}</div>
+										</div>
+									{/if}
+
+									{#if incident.mesures_correctives && Array.isArray(incident.mesures_correctives) && incident.mesures_correctives.length > 0}
+										<div class="text-xs">
+											<span class="font-medium text-gray-600">Mesures correctives:</span>
+											<ul class="mt-1 space-y-1">
+												{#each incident.mesures_correctives.slice(0, 2) as mesure}
+													<li class="text-gray-700">• {mesure}</li>
+												{/each}
+												{#if incident.mesures_correctives.length > 2}
+													<li class="text-gray-500">
+														... et {incident.mesures_correctives.length - 2} autre(s)
+													</li>
+												{/if}
+											</ul>
+										</div>
+									{/if}
 								</div>
 							{/each}
 						</div>
@@ -885,6 +1126,8 @@
 												{infra.statut || 'Non défini'}
 											</span>
 										</div>
+
+										<!-- Informations techniques -->
 										<div class="mb-4 grid grid-cols-2 gap-4 text-sm lg:grid-cols-3">
 											{#if infra.capacite}
 												<div class="rounded-lg bg-blue-50 p-3">
@@ -910,12 +1153,116 @@
 													<div class="text-gray-700">{infra.disponibilite}</div>
 												</div>
 											{/if}
-											<div class="rounded-lg bg-gray-50 p-3">
-												<span class="font-semibold text-gray-800">Redondance:</span>
-												<div class="text-gray-700">{infra.redondance}</div>
-											</div>
+											{#if infra.redondance}
+												<div class="rounded-lg bg-gray-50 p-3">
+													<span class="font-semibold text-gray-800">Redondance:</span>
+													<div class="text-gray-700">{infra.redondance}</div>
+												</div>
+											{/if}
+											{#if infra.modele}
+												<div class="rounded-lg bg-indigo-50 p-3">
+													<span class="font-semibold text-indigo-800">Modèle:</span>
+													<div class="text-gray-700">{infra.modele}</div>
+												</div>
+											{/if}
+											{#if infra.os}
+												<div class="rounded-lg bg-teal-50 p-3">
+													<span class="font-semibold text-teal-800">OS:</span>
+													<div class="text-gray-700">{infra.os}</div>
+												</div>
+											{/if}
+											{#if infra.nombre}
+												<div class="rounded-lg bg-cyan-50 p-3">
+													<span class="font-semibold text-cyan-800">Nombre:</span>
+													<div class="text-gray-700">{infra.nombre}</div>
+												</div>
+											{/if}
+											{#if infra.age_moyen}
+												<div class="rounded-lg bg-amber-50 p-3">
+													<span class="font-semibold text-amber-800">Âge moyen:</span>
+													<div class="text-gray-700">{infra.age_moyen}</div>
+												</div>
+											{/if}
 										</div>
-										{#if infra.risques}
+
+										<!-- Informations contractuelles et financières -->
+										{#if infra.fournisseur || infra.maintenance || infra.garantie || infra.sla || infra.date_installation}
+											<div class="mb-4 rounded-xl bg-slate-50 p-4">
+												<h5 class="mb-3 font-semibold text-slate-800">
+													Informations contractuelles
+												</h5>
+												<div class="grid grid-cols-2 gap-3 text-sm lg:grid-cols-3">
+													{#if infra.fournisseur}
+														<div>
+															<span class="font-medium text-slate-600">Fournisseur:</span>
+															<div class="text-slate-700">{infra.fournisseur}</div>
+														</div>
+													{/if}
+													{#if infra.maintenance}
+														<div>
+															<span class="font-medium text-slate-600">Maintenance:</span>
+															<div class="text-slate-700">{infra.maintenance}</div>
+														</div>
+													{/if}
+													{#if infra.garantie}
+														<div>
+															<span class="font-medium text-slate-600">Garantie:</span>
+															<div class="text-slate-700">{infra.garantie}</div>
+														</div>
+													{/if}
+													{#if infra.sla}
+														<div>
+															<span class="font-medium text-slate-600">SLA:</span>
+															<div class="text-slate-700">{infra.sla}</div>
+														</div>
+													{/if}
+													{#if infra.date_installation}
+														<div>
+															<span class="font-medium text-slate-600">Installation:</span>
+															<div class="text-slate-700">
+																{new Date(infra.date_installation).toLocaleDateString('fr-FR')}
+															</div>
+														</div>
+													{/if}
+												</div>
+											</div>
+										{/if}
+
+										<!-- Informations financières -->
+										{#if infra.cout_acquisition || infra.cout_mensuel || infra.cout_total}
+											<div class="mb-4 rounded-xl bg-emerald-50 p-4">
+												<h5 class="mb-3 font-semibold text-emerald-800">Coûts</h5>
+												<div class="grid grid-cols-2 gap-3 text-sm lg:grid-cols-3">
+													{#if infra.cout_acquisition}
+														<div>
+															<span class="font-medium text-emerald-600">Acquisition:</span>
+															<div class="text-emerald-700">
+																{infra.cout_acquisition.toLocaleString('fr-FR')} €
+															</div>
+														</div>
+													{/if}
+													{#if infra.cout_mensuel}
+														<div>
+															<span class="font-medium text-emerald-600">Mensuel:</span>
+															<div class="text-emerald-700">
+																{infra.cout_mensuel.toLocaleString('fr-FR')} €/mois
+															</div>
+														</div>
+													{/if}
+													{#if infra.cout_total}
+														<div>
+															<span class="font-medium text-emerald-600">Total:</span>
+															<div class="text-emerald-700">
+																{infra.cout_total.toLocaleString('fr-FR')} €
+															</div>
+														</div>
+													{/if}
+												</div>
+											</div>
+										{/if}
+
+										<!-- Risques -->
+										{#if infra.risques && infra.risques.length > 0}
 											<div class="rounded-xl border border-red-200 bg-red-50 p-4">
 												<div class="mb-2 flex items-center text-sm font-bold text-red-700">
 													<AlertTriangle size={16} class="mr-2" />
@@ -1009,7 +1356,7 @@
 										<span
 											class="rounded-full bg-red-100 px-4 py-2 text-sm font-bold text-red-800 shadow-sm"
 										>
-											{$techniqueStore.securite.incidents_total}
+											{$statistiques.incidents}
 										</span>
 									</div>
 								</div>
@@ -1053,8 +1400,7 @@
 							></div>
 						</div>
 						<span class="text-base font-black text-gray-900"
-							>Incidents Récents: <span class="text-orange-600"
-								>{$statistiques.incidentsCritiques}</span
+							>Incidents Récents: <span class="text-orange-600">{$statistiques.incidents}</span
 							></span
 						>
 					</div>

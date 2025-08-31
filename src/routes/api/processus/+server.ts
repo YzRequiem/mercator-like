@@ -31,12 +31,15 @@ export async function POST({ request }) {
 		const data = await request.json();
 		const db = getDb();
 
+		// Générer un ID unique si non fourni
+		const id = data.id || crypto.randomUUID();
+
 		await db.execute({
 			sql: `INSERT INTO processus (id, nom, sous_processus) VALUES (?, ?, ?)`,
-			args: [data.id, data.nom, JSON.stringify(data.sous_processus || [])]
+			args: [id, data.nom, JSON.stringify(data.sous_processus || [])]
 		});
 
-		return json({ success: true, data: { id: data.id, ...data } });
+		return json({ success: true, data: { id, ...data } });
 	} catch (error) {
 		console.error('Erreur lors de la création du processus:', error);
 		return json(

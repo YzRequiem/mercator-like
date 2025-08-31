@@ -5,19 +5,24 @@ import { createApiClient } from '$lib/apiClient';
 export const load: PageServerLoad = async ({ fetch }) => {
 	try {
 		const apiClient = createApiClient(fetch);
-		const response = await apiClient.getActeurs();
+		const [acteursResponse, etablissementsResponse] = await Promise.all([
+			apiClient.getActeurs(),
+			apiClient.getEtablissements()
+		]);
 
-		if (response.success && response.data) {
+		if (acteursResponse.success && acteursResponse.data) {
 			return {
-				acteurs: response.data
+				acteurs: acteursResponse.data,
+				etablissements: etablissementsResponse.success ? etablissementsResponse.data : []
 			};
 		} else {
-			throw new Error(response.error || 'Erreur lors du chargement des acteurs');
+			throw new Error(acteursResponse.error || 'Erreur lors du chargement des acteurs');
 		}
 	} catch (error) {
 		console.error('Erreur lors du chargement des acteurs:', error);
 		return {
-			acteurs: []
+			acteurs: [],
+			etablissements: []
 		};
 	}
 };

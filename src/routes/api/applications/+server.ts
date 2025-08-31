@@ -33,13 +33,25 @@ export async function POST({ request }) {
 		const data = await request.json();
 		const db = getDb();
 
+		// Générer un ID unique si non fourni
+		const id =
+			data.id ||
+			data.nom
+				?.toLowerCase()
+				.normalize('NFD')
+				.replace(/[\u0300-\u036f]/g, '')
+				.replace(/[^a-z0-9]/g, '-')
+				.replace(/-+/g, '-')
+				.replace(/^-|-$/g, '') ||
+			crypto.randomUUID();
+
 		await db.execute({
 			sql: `INSERT INTO applications 
                   (id, nom, type, domaine, criticite, statut, users, sites, conformite, 
                    version, editeur, cout_annuel, date_mise_en_service, risques, fonctionnalites) 
                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 			args: [
-				data.id,
+				id,
 				data.nom,
 				data.type || null,
 				data.domaine || null,
@@ -57,7 +69,7 @@ export async function POST({ request }) {
 			]
 		});
 
-		return json({ success: true, data: { id: data.id, ...data } });
+		return json({ success: true, data: { id, ...data } });
 	} catch (error) {
 		console.error("Erreur lors de la création de l'application:", error);
 		return json(

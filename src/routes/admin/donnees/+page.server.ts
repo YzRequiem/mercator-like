@@ -5,19 +5,26 @@ import { createApiClient } from '$lib/apiClient';
 export const load: PageServerLoad = async ({ fetch }) => {
 	try {
 		const apiClient = createApiClient(fetch);
-		const response = await apiClient.getDonnees();
+		const [donneesResponse, acteursResponse] = await Promise.all([
+			apiClient.getDonnees(),
+			apiClient.getActeurs()
+		]);
 
-		if (response.success && response.data) {
+		if (donneesResponse.success && acteursResponse.success) {
 			return {
-				donnees: response.data
+				donnees: donneesResponse.data || [],
+				acteurs: acteursResponse.data || []
 			};
 		} else {
-			throw new Error(response.error || 'Erreur lors du chargement des données');
+			throw new Error(
+				donneesResponse.error || acteursResponse.error || 'Erreur lors du chargement des données'
+			);
 		}
 	} catch (error) {
 		console.error('Erreur lors du chargement des données:', error);
 		return {
-			donnees: []
+			donnees: [],
+			acteurs: []
 		};
 	}
 };
@@ -27,17 +34,20 @@ export const actions: Actions = {
 		const data = await request.formData();
 		const donneeData = {
 			nom: data.get('nom') as string,
-			description: data.get('description') as string,
-			type: data.get('type') as string,
 			source: data.get('source') as string,
+			qualite: data.get('qualite') as string,
+			volume: data.get('volume') as string,
+			frequence_maj: data.get('frequence_maj') as string,
+			proprietaire: data.get('proprietaire') as string,
+			sensibilite: data.get('sensibilite') as string,
+			retention: data.get('retention') as string,
 			format: data.get('format') as string,
-			classification: data.get('classification') as string,
-			proprietaire: data.get('proprietaire') as string
+			taille_estimee: data.get('taille_estimee') as string
 		};
 
 		// Validation
-		if (!donneeData.nom || !donneeData.type) {
-			return fail(400, { message: 'Le nom et le type sont requis' });
+		if (!donneeData.nom) {
+			return fail(400, { message: 'Le nom est requis' });
 		}
 
 		try {
@@ -60,17 +70,20 @@ export const actions: Actions = {
 		const id = data.get('id') as string;
 		const donneeData = {
 			nom: data.get('nom') as string,
-			description: data.get('description') as string,
-			type: data.get('type') as string,
 			source: data.get('source') as string,
+			qualite: data.get('qualite') as string,
+			volume: data.get('volume') as string,
+			frequence_maj: data.get('frequence_maj') as string,
+			proprietaire: data.get('proprietaire') as string,
+			sensibilite: data.get('sensibilite') as string,
+			retention: data.get('retention') as string,
 			format: data.get('format') as string,
-			classification: data.get('classification') as string,
-			proprietaire: data.get('proprietaire') as string
+			taille_estimee: data.get('taille_estimee') as string
 		};
 
 		// Validation
-		if (!id || !donneeData.nom || !donneeData.type) {
-			return fail(400, { message: 'ID, nom et type sont requis' });
+		if (!id || !donneeData.nom) {
+			return fail(400, { message: 'ID et nom sont requis' });
 		}
 
 		try {
