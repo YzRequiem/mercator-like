@@ -31,6 +31,14 @@ export async function POST({ request }) {
 		const data = await request.json();
 		const db = getDb();
 
+		// Générer un ID unique basé sur le nom
+		const id = data.nom
+			.toLowerCase()
+			.normalize('NFD')
+			.replace(/[\u0300-\u036f]/g, '')
+			.replace(/[^a-z0-9]+/g, '-')
+			.replace(/^-+|-+$/g, '');
+
 		await db.execute({
 			sql: `INSERT INTO infrastructure 
                   (id, nom, type, localisation, statut, capacite, utilisation, redondance, 
@@ -39,7 +47,7 @@ export async function POST({ request }) {
                    nombre, os, age_moyen, cout_total, risques) 
                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 			args: [
-				data.id,
+				id,
 				data.nom,
 				data.type || null,
 				data.localisation || null,
@@ -65,7 +73,7 @@ export async function POST({ request }) {
 			]
 		});
 
-		return json({ success: true, data: { id: data.id, ...data } });
+		return json({ success: true, data: { id, ...data } });
 	} catch (error) {
 		console.error("Erreur lors de la création de l'élément d'infrastructure:", error);
 		return json(

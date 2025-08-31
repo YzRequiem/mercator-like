@@ -4,49 +4,75 @@
 
 	export let data: PageData;
 
+	// Créer les options pour le sélecteur de propriétaire à partir des acteurs
+	const proprietaireOptions = (data.acteurs || []).map((acteur) => ({
+		value: acteur.nom,
+		label: acteur.nom
+	}));
+
 	const fields = [
 		{ key: 'nom', label: 'Nom', type: 'text', required: true },
-		{ key: 'description', label: 'Description', type: 'textarea' },
-		{
-			key: 'type',
-			label: 'Type',
-			type: 'select',
-			options: [
-				{ value: 'reference', label: 'Référence' },
-				{ value: 'transactionnel', label: 'Transactionnel' },
-				{ value: 'analytique', label: 'Analytique' },
-				{ value: 'historique', label: 'Historique' }
-			]
-		},
 		{ key: 'source', label: 'Source', type: 'text' },
 		{
-			key: 'format',
-			label: 'Format',
+			key: 'qualite',
+			label: 'Qualité',
 			type: 'select',
 			options: [
-				{ value: 'sql', label: 'SQL' },
-				{ value: 'xml', label: 'XML' },
-				{ value: 'json', label: 'JSON' },
-				{ value: 'csv', label: 'CSV' },
-				{ value: 'excel', label: 'Excel' }
+				{ value: 'Très faible', label: 'Très faible' },
+				{ value: 'Faible', label: 'Faible' },
+				{ value: 'Moyenne', label: 'Moyenne' },
+				{ value: 'Bonne', label: 'Bonne' },
+				{ value: 'Très bonne', label: 'Très bonne' }
 			]
 		},
-		{ key: 'proprietaire', label: 'Propriétaire', type: 'text' },
 		{
-			key: 'confidentialite',
-			label: 'Confidentialité',
+			key: 'volume',
+			label: 'Volume',
 			type: 'select',
 			options: [
-				{ value: 'public', label: 'Public' },
-				{ value: 'interne', label: 'Interne' },
-				{ value: 'confidentiel', label: 'Confidentiel' },
-				{ value: 'secret', label: 'Secret' }
+				{ value: 'Très faible', label: 'Très faible' },
+				{ value: 'Faible', label: 'Faible' },
+				{ value: 'Moyen', label: 'Moyen' },
+				{ value: 'Élevé', label: 'Élevé' },
+				{ value: 'Très élevé', label: 'Très élevé' }
 			]
 		},
-		{ key: 'dateCreation', label: 'Date de création', type: 'date' }
+		{
+			key: 'frequence_maj',
+			label: 'Fréquence de mise à jour',
+			type: 'select',
+			options: [
+				{ value: 'En temps réel', label: 'En temps réel' },
+				{ value: 'Quotidienne', label: 'Quotidienne' },
+				{ value: 'Hebdomadaire', label: 'Hebdomadaire' },
+				{ value: 'Mensuelle', label: 'Mensuelle' },
+				{ value: 'Annuelle', label: 'Annuelle' },
+				{ value: 'Ponctuelle', label: 'Ponctuelle' }
+			]
+		},
+		{
+			key: 'proprietaire',
+			label: 'Propriétaire',
+			type: 'select',
+			options: proprietaireOptions
+		},
+		{
+			key: 'sensibilite',
+			label: 'Sensibilité',
+			type: 'select',
+			options: [
+				{ value: 'Public', label: 'Public' },
+				{ value: 'Interne', label: 'Interne' },
+				{ value: 'Confidentiel', label: 'Confidentiel' },
+				{ value: 'Secret', label: 'Secret' }
+			]
+		},
+		{ key: 'retention', label: 'Durée de rétention', type: 'text' },
+		{ key: 'format', label: 'Format', type: 'text' },
+		{ key: 'taille_estimee', label: 'Taille estimée', type: 'text' }
 	];
 
-	const displayFields = ['nom', 'type', 'format', 'proprietaire', 'confidentialite'];
+	const displayFields = ['nom', 'source', 'qualite', 'volume', 'proprietaire', 'sensibilite'];
 </script>
 
 <svelte:head>

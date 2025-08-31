@@ -4,19 +4,28 @@ import { createApiClient } from '$lib/apiClient';
 
 export const load: PageServerLoad = async ({ fetch }) => {
 	try {
-		const apiClient = createApiClient(fetch);const response = await apiClient.getProcessus();
+		const apiClient = createApiClient(fetch);
+		const [processusResponse, acteursResponse, etablissementsResponse] = await Promise.all([
+			apiClient.getProcessus(),
+			apiClient.getActeurs(),
+			apiClient.getEtablissements()
+		]);
 
-		if (response.success && response.data) {
+		if (processusResponse.success && processusResponse.data) {
 			return {
-				processus: response.data
+				processus: processusResponse.data,
+				acteurs: acteursResponse.success ? acteursResponse.data : [],
+				etablissements: etablissementsResponse.success ? etablissementsResponse.data : []
 			};
 		} else {
-			throw new Error(response.error || 'Erreur lors du chargement des processus');
+			throw new Error(processusResponse.error || 'Erreur lors du chargement des processus');
 		}
 	} catch (error) {
 		console.error('Erreur lors du chargement des processus:', error);
 		return {
-			processus: []
+			processus: [],
+			acteurs: [],
+			etablissements: []
 		};
 	}
 };
@@ -25,7 +34,10 @@ export const actions: Actions = {
 	create: async ({ request, fetch }) => {
 		const data = await request.formData();
 		const processusData = {
-			nom: data.get('nom') as string
+			nom: data.get('nom') as string,
+			sous_processus: data.get('sous_processus')
+				? JSON.parse(data.get('sous_processus') as string)
+				: []
 		};
 
 		// Validation
@@ -34,7 +46,8 @@ export const actions: Actions = {
 		}
 
 		try {
-			const apiClient = createApiClient(fetch);const response = await apiClient.createProcessus(processusData);
+			const apiClient = createApiClient(fetch);
+			const response = await apiClient.createProcessus(processusData);
 
 			if (response.success) {
 				return { success: true };
@@ -51,7 +64,10 @@ export const actions: Actions = {
 		const data = await request.formData();
 		const id = data.get('id') as string;
 		const processusData = {
-			nom: data.get('nom') as string
+			nom: data.get('nom') as string,
+			sous_processus: data.get('sous_processus')
+				? JSON.parse(data.get('sous_processus') as string)
+				: []
 		};
 
 		// Validation
@@ -60,7 +76,8 @@ export const actions: Actions = {
 		}
 
 		try {
-			const apiClient = createApiClient(fetch);const response = await apiClient.updateProcessus(id, processusData);
+			const apiClient = createApiClient(fetch);
+			const response = await apiClient.updateProcessus(id, processusData);
 
 			if (response.success) {
 				return { success: true };
@@ -82,7 +99,8 @@ export const actions: Actions = {
 		}
 
 		try {
-			const apiClient = createApiClient(fetch);const response = await apiClient.deleteProcessus(id);
+			const apiClient = createApiClient(fetch);
+			const response = await apiClient.deleteProcessus(id);
 
 			if (response.success) {
 				return { success: true };
@@ -95,4 +113,3 @@ export const actions: Actions = {
 		}
 	}
 };
-

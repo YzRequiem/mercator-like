@@ -33,7 +33,10 @@ export const actions: Actions = {
 			statut: data.get('statut') as string,
 			surface: data.get('surface') as string,
 			collaborateurs: data.get('collaborateurs') as string,
-			statut_operationnel: data.get('statut_operationnel') as string
+			statut_operationnel: data.get('statut_operationnel') as string,
+			activites: JSON.parse((data.get('activites') as string) || '[]'),
+			equipements: JSON.parse((data.get('equipements') as string) || '[]'),
+			risques: JSON.parse((data.get('risques') as string) || '[]')
 		};
 
 		// Validation
@@ -67,7 +70,10 @@ export const actions: Actions = {
 			statut: data.get('statut') as string,
 			surface: data.get('surface') as string,
 			collaborateurs: data.get('collaborateurs') as string,
-			statut_operationnel: data.get('statut_operationnel') as string
+			statut_operationnel: data.get('statut_operationnel') as string,
+			activites: JSON.parse((data.get('activites') as string) || '[]'),
+			equipements: JSON.parse((data.get('equipements') as string) || '[]'),
+			risques: JSON.parse((data.get('risques') as string) || '[]')
 		};
 
 		// Validation

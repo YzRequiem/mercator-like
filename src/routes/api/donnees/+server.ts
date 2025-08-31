@@ -26,7 +26,16 @@ export async function POST({ request }) {
 		const db = getDb();
 
 		// Générer un ID unique si non fourni
-		const id = data.id || crypto.randomUUID();
+		const id =
+			data.id ||
+			data.nom
+				?.toLowerCase()
+				.normalize('NFD')
+				.replace(/[\u0300-\u036f]/g, '')
+				.replace(/[^a-z0-9]/g, '-')
+				.replace(/-+/g, '-')
+				.replace(/^-|-$/g, '') ||
+			crypto.randomUUID();
 
 		await db.execute({
 			sql: `INSERT INTO donnees 

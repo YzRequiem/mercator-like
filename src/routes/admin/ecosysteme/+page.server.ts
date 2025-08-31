@@ -4,7 +4,8 @@ import { fail } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ fetch }) => {
 	try {
-		const apiClient = createApiClient(fetch);const response = await apiClient.getEcosysteme();
+		const apiClient = createApiClient(fetch);
+		const response = await apiClient.getEcosysteme();
 		if (response.success) {
 			return {
 				ecosysteme: response.data
@@ -28,17 +29,15 @@ export const actions: Actions = {
 	create: async ({ request, fetch }) => {
 		const data = await request.formData();
 		const ecosystemeData = {
+			id: data.get('nom')?.toString().toLowerCase().replace(/\s+/g, '-') || '',
 			nom: data.get('nom') as string,
-			description: data.get('description') as string,
 			type: data.get('type') as string,
-			domaine: data.get('domaine') as string,
-			responsable: data.get('responsable') as string,
-			partenaires: data.get('partenaires') as string,
-			statut: data.get('statut') as string
+			relation: data.get('relation') as string
 		};
 
 		try {
-			const apiClient = createApiClient(fetch);const response = await apiClient.createEcosysteme(ecosystemeData);
+			const apiClient = createApiClient(fetch);
+			const response = await apiClient.createEcosysteme(ecosystemeData);
 			if (response.success) {
 				return { success: true };
 			} else {
@@ -55,16 +54,13 @@ export const actions: Actions = {
 		const id = data.get('id') as string;
 		const ecosystemeData = {
 			nom: data.get('nom') as string,
-			description: data.get('description') as string,
 			type: data.get('type') as string,
-			domaine: data.get('domaine') as string,
-			responsable: data.get('responsable') as string,
-			partenaires: data.get('partenaires') as string,
-			statut: data.get('statut') as string
+			relation: data.get('relation') as string
 		};
 
 		try {
-			const apiClient = createApiClient(fetch);const response = await apiClient.updateEcosysteme(id, ecosystemeData);
+			const apiClient = createApiClient(fetch);
+			const response = await apiClient.updateEcosysteme(id, ecosystemeData);
 			if (response.success) {
 				return { success: true };
 			} else {
@@ -81,7 +77,8 @@ export const actions: Actions = {
 		const id = data.get('id') as string;
 
 		try {
-			const apiClient = createApiClient(fetch);const response = await apiClient.deleteEcosysteme(id);
+			const apiClient = createApiClient(fetch);
+			const response = await apiClient.deleteEcosysteme(id);
 			if (response.success) {
 				return { success: true };
 			} else {

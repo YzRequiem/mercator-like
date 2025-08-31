@@ -11,10 +11,37 @@
 		{ key: 'statut', label: 'Statut', type: 'text' },
 		{ key: 'surface', label: 'Surface', type: 'text' },
 		{ key: 'collaborateurs', label: 'Collaborateurs', type: 'text' },
-		{ key: 'statut_operationnel', label: 'Statut opérationnel', type: 'text' }
+		{
+			key: 'statut_operationnel',
+			label: 'Statut opérationnel',
+			type: 'select',
+			options: [
+				{ value: 'actif', label: 'Actif' },
+				{ value: 'inactif', label: 'Inactif' }
+			],
+			required: true
+		},
+		{
+			key: 'activites',
+			label: 'Activités',
+			type: 'tags',
+			placeholder: 'Ajouter une activité...'
+		},
+		{
+			key: 'equipements',
+			label: 'Équipements',
+			type: 'tags',
+			placeholder: 'Ajouter un équipement...'
+		},
+		{
+			key: 'risques',
+			label: 'Risques',
+			type: 'tags',
+			placeholder: 'Ajouter un risque...'
+		}
 	];
 
-	const displayFields = ['nom', 'code', 'adresse', 'statut'];
+	const displayFields = ['nom', 'code', 'statut', 'statut_operationnel', 'activites'];
 </script>
 
 <CrudPage

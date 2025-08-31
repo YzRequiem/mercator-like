@@ -54,13 +54,24 @@ export async function POST({ request }) {
 		const data = await request.json();
 		const db = getDb();
 
+		// Générer un ID unique basé sur le nom + timestamp
+		const baseId = data.nom
+			.toLowerCase()
+			.normalize('NFD')
+			.replace(/[\u0300-\u036f]/g, '')
+			.replace(/[^a-z0-9]+/g, '-')
+			.replace(/^-+|-+$/g, '');
+
+		const timestamp = Date.now();
+		const id = `${baseId}-${timestamp}`;
+
 		await db.execute({
 			sql: `INSERT INTO incidents 
                   (id, nom, impact, date, statut, description, duree, cout_estime, 
                    cause, mesures_correctives) 
                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 			args: [
-				data.id,
+				id,
 				data.nom,
 				data.impact || null,
 				data.date || null,
@@ -73,7 +84,7 @@ export async function POST({ request }) {
 			]
 		});
 
-		return json({ success: true, data: { id: data.id, ...data } });
+		return json({ success: true, data: { id, ...data } });
 	} catch (error) {
 		console.error("Erreur lors de la création de l'incident:", error);
 		return json(

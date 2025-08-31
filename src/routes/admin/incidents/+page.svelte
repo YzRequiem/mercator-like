@@ -5,38 +5,41 @@
 	export let data: PageData;
 
 	const fields = [
-		{ key: 'titre', label: 'Titre', type: 'text', required: true },
-		{ key: 'description', label: 'Description', type: 'textarea', required: true },
+		{ key: 'nom', label: "Nom de l'incident", type: 'text', required: true },
 		{
-			key: 'gravite',
-			label: 'Gravité',
+			key: 'impact',
+			label: 'Impact',
 			type: 'select',
 			required: true,
 			options: [
-				{ value: 'critique', label: 'Critique' },
-				{ value: 'majeure', label: 'Majeure' },
-				{ value: 'moyenne', label: 'Moyenne' },
-				{ value: 'mineure', label: 'Mineure' }
+				{ value: 'Critique', label: 'Critique' },
+				{ value: 'Majeur', label: 'Majeur' },
+				{ value: 'Moyen', label: 'Moyen' },
+				{ value: 'Mineur', label: 'Mineur' }
 			]
 		},
+		{ key: 'date', label: "Date de l'incident", type: 'date' },
 		{
 			key: 'statut',
 			label: 'Statut',
 			type: 'select',
 			options: [
-				{ value: 'ouvert', label: 'Ouvert' },
-				{ value: 'en_cours', label: 'En cours' },
-				{ value: 'resolu', label: 'Résolu' },
-				{ value: 'ferme', label: 'Fermé' }
+				{ value: 'Ouvert', label: 'Ouvert' },
+				{ value: 'En cours', label: 'En cours' },
+				{ value: 'Résolu', label: 'Résolu' },
+				{ value: 'Contenu', label: 'Contenu' },
+				{ value: 'Non résolu', label: 'Non résolu' },
+				{ value: 'Fermé', label: 'Fermé' }
 			]
 		},
-		{ key: 'dateOuverture', label: "Date d'ouverture", type: 'datetime-local' },
-		{ key: 'dateFermeture', label: 'Date de fermeture', type: 'datetime-local' },
-		{ key: 'responsable', label: 'Responsable', type: 'text' },
-		{ key: 'resolution', label: 'Résolution', type: 'textarea' }
+		{ key: 'duree', label: 'Durée', type: 'text' },
+		{ key: 'cout_estime', label: 'Coût estimé (€)', type: 'number' },
+		{ key: 'description', label: 'Description', type: 'textarea' },
+		{ key: 'cause', label: 'Cause', type: 'textarea' },
+		{ key: 'mesures_correctives', label: 'Mesures correctives', type: 'tags' }
 	];
 
-	const displayFields = ['titre', 'gravite', 'statut', 'dateOuverture', 'responsable'];
+	const displayFields = ['nom', 'impact', 'statut', 'date', 'duree', 'cout_estime'];
 </script>
 
 <svelte:head>

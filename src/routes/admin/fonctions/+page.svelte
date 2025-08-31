@@ -6,33 +6,48 @@
 
 	const fields = [
 		{ key: 'nom', label: 'Nom', type: 'text', required: true },
-		{ key: 'description', label: 'Description', type: 'textarea' },
-		{
-			key: 'domaine',
-			label: 'Domaine',
-			type: 'select',
-			options: [
-				{ value: 'metier', label: 'Métier' },
-				{ value: 'support', label: 'Support' },
-				{ value: 'technique', label: 'Technique' },
-				{ value: 'management', label: 'Management' }
-			]
-		},
-		{ key: 'processus', label: 'Processus', type: 'text' },
-		{ key: 'responsable', label: 'Responsable', type: 'text' },
 		{
 			key: 'statut',
 			label: 'Statut',
 			type: 'select',
 			options: [
-				{ value: 'actif', label: 'Actif' },
-				{ value: 'inactif', label: 'Inactif' },
-				{ value: 'obsolete', label: 'Obsolète' }
+				{ value: 'critique', label: 'Critique' },
+				{ value: 'partiel', label: 'Partiel' },
+				{ value: 'externe', label: 'Externe' },
+				{ value: 'absent', label: 'Absent' }
 			]
-		}
+		},
+		{
+			key: 'niveau_automatisation',
+			label: "Niveau d'automatisation",
+			type: 'select',
+			options: [
+				{ value: 'manuel', label: 'Manuel' },
+				{ value: 'semi-automatique', label: 'Semi-automatique' },
+				{ value: 'automatique', label: 'Automatique' },
+				{ value: 'externe', label: 'Externe' },
+				{ value: 'inexistant', label: 'Inexistant' }
+			]
+		},
+		{
+			key: 'frequence_utilisation',
+			label: "Fréquence d'utilisation",
+			type: 'select',
+			options: [
+				{ value: 'quotidienne', label: 'Quotidienne' },
+				{ value: 'hebdomadaire', label: 'Hebdomadaire' },
+				{ value: 'mensuelle', label: 'Mensuelle' },
+				{ value: 'ponctuelle', label: 'Ponctuelle' }
+			]
+		},
+		{ key: 'flux', label: 'Flux', type: 'tags' },
+		{ key: 'donnees', label: 'Données', type: 'tags' },
+		{ key: 'utilisateurs', label: 'Utilisateurs', type: 'tags' },
+		{ key: 'sites', label: 'Sites', type: 'tags' },
+		{ key: 'description', label: 'Description', type: 'textarea' }
 	];
 
-	const displayFields = ['nom', 'domaine', 'statut', 'processus', 'responsable'];
+	const displayFields = ['nom', 'statut', 'niveau_automatisation', 'frequence_utilisation'];
 </script>
 
 <svelte:head>
