@@ -396,8 +396,8 @@
 				<span class="search-icon">🔍</span>
 			</div>
 			<button class="btn btn-primary" on:click={startCreate}>
-				<span>➕</span>
-				Nouveau {entityLabel.slice(0, -1)}
+				<span></span>
+				{entityLabel.slice(0, -1)}
 			</button>
 			<button class="btn btn-secondary" on:click={loadItems}>
 				<span>🔄</span>

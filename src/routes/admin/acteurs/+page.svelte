@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import CrudPage from '$lib/components/CrudPage.svelte';
+	import { Users } from 'lucide-svelte';
 
 	export let data: PageData;
 
@@ -20,7 +21,7 @@
 	const displayFields = ['nom', 'site', 'role'];
 
 	const referenceData = {
-		etablissements: data.etablissements
+		etablissements: data.etablissements || []
 	};
 </script>
 
@@ -28,7 +29,7 @@
 	data={data.acteurs}
 	entityType="acteurs"
 	entityLabel="Acteurs"
-	entityIcon="👥"
+	entityIcon={Users}
 	{fields}
 	{displayFields}
 	{referenceData}

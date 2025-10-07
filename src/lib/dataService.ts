@@ -82,6 +82,10 @@ export interface Application {
 	date_mise_en_service?: string;
 	risques: string[];
 	fonctionnalites?: string[];
+	technologies?: string[];
+	hebergement?: string;
+	licence?: string;
+	description?: string;
 }
 
 export interface Donnee {

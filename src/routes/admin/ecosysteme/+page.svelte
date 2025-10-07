@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import CrudPage from '$lib/components/CrudPage.svelte';
+	import { Globe } from 'lucide-svelte';
 
 	export let data: PageData;
 
@@ -32,7 +33,7 @@
 	data={data.ecosysteme || []}
 	entityType="ecosysteme"
 	entityLabel="Écosystème"
-	entityIcon="🌐"
+	entityIcon={Globe}
 	{fields}
 	{displayFields}
 />

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import CrudPage from '$lib/components/CrudPage.svelte';
+	import { AlertTriangle } from 'lucide-svelte';
 
 	export let data: PageData;
 
@@ -50,7 +51,7 @@
 	data={data.incidents || []}
 	entityType="incidents"
 	entityLabel="Incidents"
-	entityIcon="⚠️"
+	entityIcon={AlertTriangle}
 	{fields}
 	{displayFields}
 />

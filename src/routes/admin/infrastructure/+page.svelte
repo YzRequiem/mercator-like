@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import CrudPage from '$lib/components/CrudPage.svelte';
+	import { Server } from 'lucide-svelte';
 
 	export let data: PageData;
 
@@ -68,7 +69,7 @@
 	data={data.infrastructure || []}
 	entityType="infrastructure"
 	entityLabel="Infrastructure"
-	entityIcon="🏗️"
+	entityIcon={Server}
 	{fields}
 	{displayFields}
 />

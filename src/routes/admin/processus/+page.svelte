@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import CrudPage from '$lib/components/CrudPage.svelte';
+	import { Workflow } from 'lucide-svelte';
 
 	export let data: PageData;
 
@@ -35,8 +36,8 @@
 	const displayFields = ['nom', 'sous_processus'];
 
 	const referenceData = {
-		acteurs: data.acteurs,
-		etablissements: data.etablissements
+		acteurs: data.acteurs || [],
+		etablissements: data.etablissements || []
 	};
 </script>
 
@@ -44,7 +45,7 @@
 	data={data.processus}
 	entityType="processus"
 	entityLabel="Processus"
-	entityIcon="⚙️"
+	entityIcon={Workflow}
 	{fields}
 	{displayFields}
 	{referenceData}
