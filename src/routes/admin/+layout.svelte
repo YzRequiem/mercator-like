@@ -2,18 +2,32 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import ToastContainer from '$lib/components/ToastContainer.svelte';
+	import {
+		LayoutDashboard,
+		Building2,
+		Workflow,
+		Users,
+		Monitor,
+		Server,
+		AlertTriangle,
+		Wrench,
+		Database,
+		Globe,
+		Home,
+		Link
+	} from 'lucide-svelte';
 
 	const adminRoutes = [
-		{ path: '/admin', label: 'Tableau de bord', icon: '📊' },
-		{ path: '/admin/etablissements', label: 'Établissements', icon: '🏢' },
-		{ path: '/admin/processus', label: 'Processus', icon: '⚙️' },
-		{ path: '/admin/acteurs', label: 'Acteurs', icon: '👥' },
-		{ path: '/admin/applications', label: 'Applications', icon: '💻' },
-		{ path: '/admin/infrastructure', label: 'Infrastructure', icon: '🏗️' },
-		{ path: '/admin/incidents', label: 'Incidents', icon: '⚠️' },
-		{ path: '/admin/fonctions', label: 'Fonctions', icon: '🔧' },
-		{ path: '/admin/donnees', label: 'Données', icon: '📊' },
-		{ path: '/admin/ecosysteme', label: 'Écosystème', icon: '🌐' }
+		{ path: '/admin', label: 'Tableau de bord', icon: LayoutDashboard },
+		{ path: '/admin/etablissements', label: 'Établissements', icon: Building2 },
+		{ path: '/admin/processus', label: 'Processus', icon: Workflow },
+		{ path: '/admin/acteurs', label: 'Acteurs', icon: Users },
+		{ path: '/admin/applications', label: 'Applications', icon: Monitor },
+		{ path: '/admin/infrastructure', label: 'Infrastructure', icon: Server },
+		{ path: '/admin/incidents', label: 'Incidents', icon: AlertTriangle },
+		{ path: '/admin/fonctions', label: 'Fonctions', icon: Wrench },
+		{ path: '/admin/donnees', label: 'Données', icon: Database },
+		{ path: '/admin/ecosysteme', label: 'Écosystème', icon: Globe }
 	];
 
 	$: currentPath = $page.url.pathname;
@@ -31,16 +45,16 @@
 <main class="admin-layout">
 	<header class="admin-header">
 		<div class="header-content">
-			<h1>🗺️ Mercator-like - Administration</h1>
+			<h1>Mercator-like - Administration</h1>
 			<p>Gestion complète du système d'information</p>
 		</div>
 		<div class="header-actions">
 			<a href="/" class="btn btn-primary">
-				<span>🏠</span>
+				<Home size={18} />
 				Accueil
 			</a>
 			<button class="btn btn-secondary" on:click={showDocumentation}>
-				<span>🔗</span>
+				<Link size={18} />
 				API Documentation
 			</button>
 		</div>
@@ -53,7 +67,9 @@
 				class="nav-link {currentPath === route.path ? 'active' : ''}"
 				data-sveltekit-preload-data="hover"
 			>
-				<span class="nav-icon">{route.icon}</span>
+				<span class="nav-icon">
+					<svelte:component this={route.icon} size={18} strokeWidth={2} />
+				</span>
 				<span class="nav-label">{route.label}</span>
 			</a>
 		{/each}
@@ -177,7 +193,9 @@
 	}
 
 	.nav-icon {
-		font-size: 16px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.admin-content {

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import CrudPage from '$lib/components/CrudPage.svelte';
+	import { Wrench } from 'lucide-svelte';
 
 	export let data: PageData;
 
@@ -58,7 +59,7 @@
 	data={data.fonctions || []}
 	entityType="fonctions"
 	entityLabel="Fonctions"
-	entityIcon="🔧"
+	entityIcon={Wrench}
 	{fields}
 	{displayFields}
 />

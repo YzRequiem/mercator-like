@@ -102,14 +102,20 @@ export async function getStatistiques() {
 		acteursCount,
 		applicationsCount,
 		infrastructureCount,
-		incidentsCount
+		incidentsCount,
+		fonctionsCount,
+		donneesCount,
+		ecosystemeCount
 	] = await Promise.all([
 		db.execute('SELECT COUNT(*) as count FROM etablissements'),
 		db.execute('SELECT COUNT(*) as count FROM processus'),
 		db.execute('SELECT COUNT(*) as count FROM acteurs'),
 		db.execute('SELECT COUNT(*) as count FROM applications'),
 		db.execute('SELECT COUNT(*) as count FROM infrastructure'),
-		db.execute('SELECT COUNT(*) as count FROM incidents')
+		db.execute('SELECT COUNT(*) as count FROM incidents'),
+		db.execute('SELECT COUNT(*) as count FROM fonctions'),
+		db.execute('SELECT COUNT(*) as count FROM donnees'),
+		db.execute('SELECT COUNT(*) as count FROM ecosysteme')
 	]);
 
 	// Incidents critiques (impact "Critique")
@@ -125,6 +131,9 @@ export async function getStatistiques() {
 		applications: Number((applicationsCount.rows[0] as any)?.count || 0),
 		infrastructure: Number((infrastructureCount.rows[0] as any)?.count || 0),
 		incidents: Number((incidentsCount.rows[0] as any)?.count || 0),
+		fonctions: Number((fonctionsCount.rows[0] as any)?.count || 0),
+		donnees: Number((donneesCount.rows[0] as any)?.count || 0),
+		ecosysteme: Number((ecosystemeCount.rows[0] as any)?.count || 0),
 		incidentsCritiques: Number((incidentsCritiques.rows[0] as any)?.count || 0)
 	};
 }

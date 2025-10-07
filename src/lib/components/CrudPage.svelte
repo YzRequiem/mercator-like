@@ -4,12 +4,14 @@
 	import { invalidateAll } from '$app/navigation';
 	import { addToast } from '$lib/toastStore';
 	import LoadingSpinner from './LoadingSpinner.svelte';
+	import type { ComponentType } from 'svelte';
+	import { Search, Plus, Edit, Trash2, X } from 'lucide-svelte';
 
 	// Props
 	export let data: any[];
 	export let entityType: string;
 	export let entityLabel: string;
-	export let entityIcon: string = '📋';
+	export let entityIcon: ComponentType | string = '📋';
 	export let fields: Array<{
 		key: string;
 		label: string;
@@ -37,6 +39,9 @@
 	let sortField = '';
 	let sortDirection: 'asc' | 'desc' = 'asc';
 	let isSubmitting = false;
+
+	// Vérifier si l'icône est un composant Svelte
+	$: isIconComponent = typeof entityIcon !== 'string';
 
 	// Données filtrées et triées
 	$: filteredItems = searchTerm
@@ -137,7 +142,13 @@
 <div class="crud-container {entityType}">
 	<div class="crud-header">
 		<div class="header-title">
-			<span class="entity-icon">{entityIcon}</span>
+			<span class="entity-icon">
+				{#if isIconComponent && typeof entityIcon !== 'string'}
+					<svelte:component this={entityIcon} size={24} strokeWidth={2} />
+				{:else}
+					{entityIcon}
+				{/if}
+			</span>
 			<h1>Gestion des {entityLabel}</h1>
 		</div>
 		<div class="header-actions">
@@ -148,18 +159,26 @@
 					bind:value={searchTerm}
 					class="search-input"
 				/>
-				<span class="search-icon">🔍</span>
+				<span class="search-icon">
+					<Search size={16} />
+				</span>
 			</div>
 			<button class="btn btn-primary" onclick={startCreate}>
-				<span>➕</span>
-				Nouveau {entityLabel.slice(0, -1)}
+				<Plus size={18} />
+				{entityLabel}
 			</button>
 		</div>
 	</div>
 
 	{#if sortedItems.length === 0}
 		<div class="empty-state">
-			<div class="empty-icon">{entityIcon}</div>
+			<div class="empty-icon">
+				{#if isIconComponent && typeof entityIcon !== 'string'}
+					<svelte:component this={entityIcon} size={48} strokeWidth={2} />
+				{:else}
+					{entityIcon}
+				{/if}
+			</div>
 			<h3>Aucun {entityLabel.slice(0, -1).toLowerCase()} trouvé</h3>
 			<p>Commencez par créer votre premier {entityLabel.slice(0, -1).toLowerCase()}.</p>
 			<button class="btn btn-primary" onclick={startCreate}>
@@ -255,7 +274,7 @@
 									onclick={() => startEdit(item)}
 									title="Modifier"
 								>
-									✏️
+									<Edit size={14} />
 								</button>
 								<form
 									method="POST"
@@ -277,7 +296,7 @@
 												`Êtes-vous sûr de vouloir supprimer ce ${entityLabel.slice(0, -1).toLowerCase()} ?`
 											)}
 									>
-										🗑️
+										<Trash2 size={14} />
 									</button>
 								</form>
 							</td>
@@ -309,7 +328,9 @@
 					<h3 id="modal-title">
 						{editingItem ? 'Modifier' : 'Créer'} un {entityLabel.slice(0, -1).toLowerCase()}
 					</h3>
-					<button class="modal-close" onclick={resetForm}>✕</button>
+					<button class="modal-close" onclick={resetForm}>
+						<X size={20} />
+					</button>
 				</div>
 
 				<form
@@ -670,6 +691,9 @@
 	}
 
 	.entity-icon {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		font-size: 1.5rem;
 	}
 
@@ -705,6 +729,9 @@
 		transform: translateY(-50%);
 		color: #666;
 		pointer-events: none;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.btn {
@@ -769,6 +796,9 @@
 		font-size: 4rem;
 		margin-bottom: 20px;
 		opacity: 0.5;
+		display: flex;
+		align-items: center;
+		justify-content: center;
 	}
 
 	.empty-state h3 {
@@ -903,16 +933,14 @@
 	.modal-close {
 		background: none;
 		border: none;
-		font-size: 20px;
 		color: #666;
 		cursor: pointer;
-		padding: 0;
-		width: 30px;
-		height: 30px;
+		padding: 4px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		border-radius: 4px;
+		transition: background-color 0.2s ease;
 	}
 
 	.modal-close:hover {

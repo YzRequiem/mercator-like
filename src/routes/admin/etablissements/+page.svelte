@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { PageData } from './$types';
 	import CrudPage from '$lib/components/CrudPage.svelte';
+	import { Building2 } from 'lucide-svelte';
 
 	export let data: PageData;
 
@@ -48,7 +49,7 @@
 	data={data.etablissements}
 	entityType="etablissements"
 	entityLabel="Établissements"
-	entityIcon="🏢"
+	entityIcon={Building2}
 	{fields}
 	{displayFields}
 />

@@ -1,6 +1,20 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
+	import {
+		Building2,
+		Workflow,
+		Users,
+		Monitor,
+		Server,
+		AlertTriangle,
+		Wrench,
+		Database,
+		Globe,
+		Link,
+		RefreshCw,
+		Search
+	} from 'lucide-svelte';
 
 	let isLoading = true;
 	let stats = {
@@ -31,11 +45,11 @@
 		}
 	});
 
-	const adminModules = [
+	$: adminModules = [
 		{
 			title: 'Établissements',
 			description: 'Gestion des sites et implantations',
-			icon: '🏢',
+			icon: Building2,
 			path: '/admin/etablissements',
 			count: stats.etablissements,
 			color: 'blue'
@@ -43,7 +57,7 @@
 		{
 			title: 'Processus',
 			description: 'Processus métier et procédures',
-			icon: '⚙️',
+			icon: Workflow,
 			path: '/admin/processus',
 			count: stats.processus,
 			color: 'green'
@@ -51,7 +65,7 @@
 		{
 			title: 'Acteurs',
 			description: 'Personnes et rôles',
-			icon: '👥',
+			icon: Users,
 			path: '/admin/acteurs',
 			count: stats.acteurs,
 			color: 'purple'
@@ -59,7 +73,7 @@
 		{
 			title: 'Applications',
 			description: 'Applications et logiciels',
-			icon: '💻',
+			icon: Monitor,
 			path: '/admin/applications',
 			count: stats.applications,
 			color: 'orange'
@@ -67,7 +81,7 @@
 		{
 			title: 'Infrastructure',
 			description: 'Matériel et infrastructure IT',
-			icon: '🏗️',
+			icon: Server,
 			path: '/admin/infrastructure',
 			count: stats.infrastructure,
 			color: 'red'
@@ -75,7 +89,7 @@
 		{
 			title: 'Incidents',
 			description: 'Gestion des incidents',
-			icon: '⚠️',
+			icon: AlertTriangle,
 			path: '/admin/incidents',
 			count: stats.incidents,
 			color: 'yellow'
@@ -83,7 +97,7 @@
 		{
 			title: 'Fonctions',
 			description: 'Fonctions métier',
-			icon: '🔧',
+			icon: Wrench,
 			path: '/admin/fonctions',
 			count: stats.fonctions,
 			color: 'teal'
@@ -91,7 +105,7 @@
 		{
 			title: 'Données',
 			description: 'Gestion des données',
-			icon: '📊',
+			icon: Database,
 			path: '/admin/donnees',
 			count: stats.donnees,
 			color: 'indigo'
@@ -99,7 +113,7 @@
 		{
 			title: 'Écosystème',
 			description: "Vue d'ensemble du système",
-			icon: '🌐',
+			icon: Globe,
 			path: '/admin/ecosysteme',
 			count: stats.ecosysteme,
 			color: 'pink'
@@ -113,7 +127,7 @@
 
 <div class="dashboard">
 	<div class="dashboard-header">
-		<h1>🗺️ Tableau de bord administrateur</h1>
+		<h1>Tableau de bord administrateur</h1>
 		<p>Bienvenue dans l'interface d'administration de Mercator-like</p>
 	</div>
 
@@ -126,7 +140,9 @@
 		<div class="stats-grid">
 			{#each adminModules as module}
 				<a href={module.path} class="stat-card {module.color}" data-sveltekit-preload-data="hover">
-					<div class="stat-icon">{module.icon}</div>
+					<div class="stat-icon">
+						<svelte:component this={module.icon} size={32} strokeWidth={2} />
+					</div>
 					<div class="stat-content">
 						<h3>{module.title}</h3>
 						<p>{module.description}</p>
@@ -141,15 +157,12 @@
 			<h2>Actions rapides</h2>
 			<div class="actions-grid">
 				<button class="action-btn" on:click={() => window.open('/api', '_blank')}>
-					<span>🔗</span>
+					<Link size={20} />
 					Documentation API
 				</button>
-				<a href="/migrate" class="action-btn">
-					<span>🚀</span>
-					Migration de données
-				</a>
+
 				<a href="/diagnostic" class="action-btn">
-					<span>🔍</span>
+					<Search size={20} />
 					Diagnostic système
 				</a>
 			</div>
@@ -217,7 +230,6 @@
 	}
 
 	.stat-icon {
-		font-size: 2.5rem;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -323,10 +335,6 @@
 	.action-btn:hover {
 		background: #e9ecef;
 		transform: translateY(-1px);
-	}
-
-	.action-btn span {
-		font-size: 1.2rem;
 	}
 
 	@media (max-width: 768px) {
